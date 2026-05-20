@@ -1,54 +1,34 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get(
-  "/",
-  authMiddleware,
-  async (req, res) => {
-    try {
+router.get("/", async (req, res) => {
+  try {
+    const totalEmployees = await prisma.user.count({
+      where: { role: "EMPLOYEE" } // ✅ Enum match
+    });
 
-      const totalEmployees = await prisma.user.count({
-        where: {
-          role: "Employee"
-        }
-      });
+    const totalTasks = await prisma.task.count();
 
-      const totalTasks = await prisma.task.count();
+    const completedTasks = await prisma.task.count({
+      where: { status: "Completed" }
+    });
 
-      const completedTasks = await prisma.task.count({
-        where: {
-          status: "Completed"
-        }
-      });
+    const totalReviews = await prisma.performance.count();
 
-      const pendingTasks = await prisma.task.count({
-        where: {
-          status: "Pending"
-        }
-      });
+    res.json({
+      totalEmployees,
+      totalTasks,
+      completedTasks,
+      totalReviews
+    });
 
-      const totalReviews = await prisma.performance.count();
-
-      res.json({
-        totalEmployees,
-        totalTasks,
-        completedTasks,
-        pendingTasks,
-        totalReviews
-      });
-
-    } catch (error) {
-
-      res.status(500).json({
-        error: error.message
-      });
-
-    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
   }
-);
+});
 
 export default router;

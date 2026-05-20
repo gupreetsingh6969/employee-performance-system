@@ -1,192 +1,154 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
-function Employee() {
-
-const [employees, setEmployees] = useState([]);
-const [name, setName] = useState("");
-const [email, setEmail] = useState("");
-const [editId, setEditId] = useState(null);
-
-useEffect(() => {
-fetchEmployees();
-}, []);
-
-const fetchEmployees = async () => {
-
-try {
-
-const response = await api.get("/employees");
-
-setEmployees(response.data);
-
-} catch(error){
-
-console.log(error);
-
-}
-
-};
-
-const saveEmployee = async () => {
-
-try {
-
-if(name.trim()===""){
-
-alert("Employee name is required");
-
-return;
-
-}
-
-if(email.trim()==="" && !editId){
-
-alert("Employee email is required");
-
-return;
-
-}
-
-if(
-!editId &&
-!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-){
-
-alert("Enter valid email");
-
-return;
-
-}
-
-if(editId){
-
-await api.put(`/employees/${editId}`,{
-name,
-role:"Employee"
-});
-
-setEditId(null);
-
-}else{
-
-await api.post("/employees",{
-name,
-email
-});
-
-}
-
-setName("");
-setEmail("");
-
-fetchEmployees();
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-
-const editEmployee=(emp)=>{
-
-setName(emp.name);
-setEmail(emp.email);
-
-setEditId(emp.id);
-
-};
-
-const deleteEmployee = async(id)=>{
-
-try{
-
-await api.delete(`/employees/${id}`);
-
-fetchEmployees();
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-
-return(
-
-<div>
-
-<h1>Employees</h1>
-
-<input
-type="text"
-placeholder="Employee Name"
-value={name}
-onChange={(e)=>setName(e.target.value)}
-/>
-
-<br/><br/>
-
-<input
-type="email"
-placeholder="Employee Email"
-value={email}
-onChange={(e)=>setEmail(e.target.value)}
-disabled={editId}
-/>
-
-<br/><br/>
-
-<button onClick={saveEmployee}>
-{editId ? "Update Employee" : "Add Employee"}
-</button>
-
-<hr/>
-
-{
-
-employees.map((emp)=>(
-
-<div
-key={emp.id}
-style={{
-border:"1px solid gray",
-padding:"10px",
-margin:"10px"
-}}
->
-
-<h3>{emp.name}</h3>
-
-<p>{emp.email}</p>
-
-<button
-onClick={()=>editEmployee(emp)}
->
-Edit
-</button>
-
-{" "}
-
-<button
-onClick={()=>deleteEmployee(emp.id)}
->
-Delete
-</button>
-
-</div>
-
-))
-
-}
-
-</div>
-
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
+} from "chart.js";
+
+import { Bar, Pie } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
 );
 
+function Dashboard() {
+  const [stats, setStats] = useState({});
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const loadDashboard = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const dashboardRes = await api.get("/dashboard", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const usersRes = await api.get("/users");
+
+      setStats(dashboardRes.data);
+      setEmployees(usersRes.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Charts data
+  const taskChartData = {
+    labels: ["Completed", "Pending"],
+    datasets: [
+      {
+        label: "Tasks",
+        data: [
+          stats.completedTasks || 0,
+          (stats.totalTasks || 0) - (stats.completedTasks || 0)
+        ],
+        backgroundColor: ["#4caf50", "#ff9800"]
+      }
+    ]
+  };
+
+  const employeeChartData = {
+    labels: ["Employees", "Reviews"],
+    datasets: [
+      {
+        label: "Analytics",
+        data: [stats.totalEmployees || 0, stats.totalReviews || 0],
+        backgroundColor: ["#2196f3", "#9c27b0"]
+      }
+    ]
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1 style={{ textAlign: "center" }}>Employee Performance Dashboard</h1>
+
+      {/* Stats Boxes */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          flexWrap: "wrap",
+          marginTop: "30px"
+        }}
+      >
+        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
+          <h3>Total Employees</h3>
+          <h1>{stats.totalEmployees}</h1>
+        </div>
+        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
+          <h3>Total Tasks</h3>
+          <h1>{stats.totalTasks}</h1>
+        </div>
+        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
+          <h3>Completed Tasks</h3>
+          <h1>{stats.completedTasks}</h1>
+        </div>
+        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
+          <h3>Total Reviews</h3>
+          <h1>{stats.totalReviews}</h1>
+        </div>
+      </div>
+
+      <hr />
+
+      {/* Charts */}
+      <h2>Analytics Dashboard</h2>
+      <div
+        style={{
+          display: "flex",
+          gap: "50px",
+          flexWrap: "wrap",
+          justifyContent: "center"
+        }}
+      >
+        <div style={{ width: "400px" }}>
+          <Bar data={employeeChartData} />
+        </div>
+        <div style={{ width: "400px" }}>
+          <Pie data={taskChartData} />
+        </div>
+      </div>
+
+      <hr />
+
+      {/* Navigation Buttons */}
+      <div style={{ margin: "20px 0", display: "flex", gap: "20px", justifyContent: "center" }}>
+        <button onClick={() => window.location.href = "/notifications"}>View Notifications</button>
+        <button onClick={() => window.location.href = "/ai"}>View AI Recommendations</button>
+      </div>
+
+      <hr />
+
+      {/* Employee List */}
+      <h2>Employee List</h2>
+      {employees.map((emp) => (
+        <div
+          key={emp.id}
+          style={{ border: "1px solid lightgray", padding: "10px", margin: "10px" }}
+        >
+          <p><b>Name:</b> {emp.name}</p>
+          <p><b>Email:</b> {emp.email}</p>
+          <p><b>Role:</b> {emp.role}</p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-export default Employee;
+export default Dashboard;

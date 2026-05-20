@@ -3,71 +3,121 @@ import api from "../services/api";
 
 function Login() {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+const handleLogin = async () => {
 
-    try {
+try {
 
-      const response = await api.post(
-        "/api/auth/login",
-        {
-          email,
-          password
-        }
-      );
+setLoading(true);
 
-      localStorage.setItem(
-        "token",
-        response.data.token
-      );
+const response = await api.post(
+"/api/auth/login",
+{
+email: email.trim(),
+password: password.trim()
+}
+);
 
-      alert("Login Successful");
+console.log(response.data);
 
-      window.location.href = "/dashboard";
+localStorage.setItem(
+"token",
+response.data.token
+);
 
-    } catch (error) {
+alert("Login Successful");
 
-      console.log(error);
+window.location.href="/dashboard";
 
-      alert("Login Failed");
+} catch(error){
 
-    }
+console.log("Login Error:", error);
 
-  };
+alert(
+error?.response?.data?.message ||
+"Login Failed"
+);
 
-  return (
+}
 
-    <div>
+finally{
 
-      <h1>Employee Performance System</h1>
+setLoading(false);
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+}
 
-      <br /><br />
+};
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+return (
 
-      <br /><br />
+<div
+style={{
+display:"flex",
+flexDirection:"column",
+alignItems:"center",
+marginTop:"100px"
+}}
+>
 
-      <button onClick={handleLogin}>
-        Login
-      </button>
+<h1>Employee Performance System</h1>
 
-    </div>
+<input
+type="email"
+placeholder="Email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+style={{
+padding:"10px",
+width:"250px"
+}}
+/>
 
-  );
+<br/>
+
+<input
+type="password"
+placeholder="Password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+style={{
+padding:"10px",
+width:"250px"
+}}
+/>
+
+<br/>
+
+<button
+onClick={handleLogin}
+disabled={loading}
+style={{
+padding:"10px",
+width:"120px"
+}}
+>
+{loading ? "Logging in..." : "Login"}
+</button>
+
+<br/>
+
+<button
+onClick={() =>
+window.location.href="/signup"
+}
+style={{
+padding:"10px",
+width:"120px"
+}}
+>
+Sign Up
+</button>
+
+</div>
+
+);
 
 }
 

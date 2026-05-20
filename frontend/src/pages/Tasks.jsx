@@ -2,223 +2,87 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 
 function Tasks() {
-
-const [tasks, setTasks] = useState([]);
-const [title, setTitle] = useState("");
-const [description, setDescription] = useState("");
-const [editId, setEditId] = useState(null);
-
-useEffect(() => {
-fetchTasks();
-}, []);
-
-const fetchTasks = async () => {
-
-try{
-
-const response = await api.get("/tasks");
-
-setTasks(response.data);
-
-}catch(error){
-
-console.log("Fetch Error:", error);
-
-}
-
-};
-
-const saveTask = async()=>{
-
-try{
-
-if(title.trim()===""){
-
-alert("Task title required");
-
-return;
-
-}
-
-if(description.trim()===""){
-
-alert("Task description required");
-
-return;
-
-}
-
-if(editId){
-
-await api.put(`/tasks/${editId}`,{
-title,
-description
-});
-
-setEditId(null);
-
-}else{
-
-await api.post("/tasks",{
-title,
-description,
-status:"Pending"
-});
-
-}
-
-setTitle("");
-setDescription("");
-
-fetchTasks();
-
-}catch(error){
-
-console.log("Save Error:", error);
-
-}
-
-};
-
-const deleteTask=async(id)=>{
-
-try{
-
-await api.delete(`/tasks/${id}`);
-
-fetchTasks();
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-
-const editTask=(task)=>{
-
-setTitle(task.title);
-setDescription(task.description);
-
-setEditId(task.id);
-
-};
-
-const changeStatus=async(task)=>{
-
-try{
-
-await api.put(`/tasks/${task.id}`,{
-
-title:task.title,
-description:task.description,
-
-status:
-task.status==="Pending"
-? "Completed"
-: "Pending"
-
-});
-
-fetchTasks();
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-
-return(
-
-<div>
-
-<h1>Tasks Page</h1>
-
-<input
-type="text"
-placeholder="Task Title"
-value={title}
-onChange={(e)=>setTitle(e.target.value)}
-/>
-
-<br/><br/>
-
-<input
-type="text"
-placeholder="Task Description"
-value={description}
-onChange={(e)=>setDescription(e.target.value)}
-/>
-
-<br/><br/>
-
-<button onClick={saveTask}>
-{editId ? "Update Task" : "Add Task"}
-</button>
-
-<hr/>
-
-{
-
-tasks.map((task)=>(
-
-<div
-key={task.id}
-style={{
-border:"1px solid gray",
-padding:"10px",
-margin:"10px"
-}}
->
-
-<h3>{task.title}</h3>
-
-<p>{task.description}</p>
-
-<p>
-Status:
-<b> {task.status}</b>
-</p>
-
-<button
-onClick={()=>editTask(task)}
->
-Edit
-</button>
-
-{" "}
-
-<button
-onClick={()=>deleteTask(task.id)}
->
-Delete
-</button>
-
-{" "}
-
-<button
-onClick={()=>changeStatus(task)}
->
-
-{task.status==="Pending"
-? "Mark Complete"
-: "Mark Pending"}
-
-</button>
-
-</div>
-
-))
-
-}
-
-</div>
-
-);
-
+  const [tasks, setTasks] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    loadTasks();
+    loadEmployees();
+  }, []);
+
+  const loadTasks = async () => {
+    try {
+      const res = await api.get("/tasks");
+      setTasks(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const loadEmployees = async () => {
+    try {
+      const res = await api.get("/users");
+      setEmployees(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleAddTask = async () => {
+    try {
+      await api.post("/tasks", { title, description, employeeId, deadline });
+      setTitle(""); setDescription(""); setEmployeeId(""); setDeadline("");
+      loadTasks();
+    } catch (err) { console.log(err); }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/tasks/${id}`);
+      loadTasks();
+    } catch (err) { console.log(err); }
+  };
+
+  const toggleStatus = async (task) => {
+    try {
+      const newStatus = task.status === "Completed" ? "Pending" : "Completed";
+      await api.put(`/tasks/${task.id}`, { status: newStatus });
+      loadTasks();
+    } catch (err) { console.log(err); }
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Tasks Management</h1>
+
+      <div style={{ marginBottom: "20px" }}>
+        <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <select value={employeeId} onChange={(e) => setEmployeeId(e.target.value)}>
+          <option value="">Select Employee</option>
+          {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.name}</option>)}
+        </select>
+        <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+        <button onClick={handleAddTask}>Add Task</button>
+      </div>
+
+      {tasks.map(task => (
+        <div key={task.id} style={{ border: "1px solid lightgray", padding: "10px", margin: "10px" }}>
+          <p><b>Title:</b> {task.title}</p>
+          <p><b>Description:</b> {task.description}</p>
+          <p><b>Assigned To:</b> {task.employee?.name}</p>
+          <p><b>Status:</b> {task.status}</p>
+          <p><b>Deadline:</b> {new Date(task.deadline).toLocaleDateString()}</p>
+          <button onClick={() => toggleStatus(task)}>Toggle Status</button>
+          <button onClick={() => handleDelete(task.id)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default Tasks;
