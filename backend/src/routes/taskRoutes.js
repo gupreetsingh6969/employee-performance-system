@@ -7,7 +7,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 
-// Assign task (Admin only)
+// Create Task
 router.post(
   "/",
   authMiddleware,
@@ -26,26 +26,31 @@ router.post(
         data: {
           title,
           description,
-          employeeId,
-          deadline: new Date(deadline)
+          employeeId: employeeId || null,
+          deadline: deadline ? new Date(deadline) : null,
+          status: "Pending"
         }
       });
 
       res.status(201).json({
-        message: "Task assigned",
+        message: "Task assigned successfully",
         task
       });
 
     } catch (error) {
+
+      console.log(error);
+
       res.status(500).json({
         error: error.message
       });
+
     }
   }
 );
 
 
-// Get all tasks
+// Get Tasks
 router.get(
   "/",
   authMiddleware,
@@ -67,47 +72,55 @@ router.get(
       res.json(tasks);
 
     } catch (error) {
+
+      console.log(error);
+
       res.status(500).json({
         error: error.message
       });
+
     }
   }
 );
 
 
-// Update task status
+// Update Task
 router.put(
   "/:id",
   authMiddleware,
   async (req, res) => {
     try {
 
-      const { status } = req.body;
-
-      const task = await prisma.task.update({
+      const updatedTask = await prisma.task.update({
         where: {
           id: Number(req.params.id)
         },
         data: {
-          status
+          title: req.body.title,
+          description: req.body.description,
+          status: req.body.status || undefined
         }
       });
 
       res.json({
-        message: "Task updated",
-        task
+        message: "Task updated successfully",
+        task: updatedTask
       });
 
     } catch (error) {
+
+      console.log(error);
+
       res.status(500).json({
         error: error.message
       });
+
     }
   }
 );
 
 
-// Delete task
+// Delete Task
 router.delete(
   "/:id",
   authMiddleware,
@@ -122,13 +135,17 @@ router.delete(
       });
 
       res.json({
-        message: "Task deleted"
+        message: "Task deleted successfully"
       });
 
     } catch (error) {
+
+      console.log(error);
+
       res.status(500).json({
         error: error.message
       });
+
     }
   }
 );

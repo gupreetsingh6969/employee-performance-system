@@ -3,68 +3,143 @@ import api from "../services/api";
 
 function Dashboard() {
 
-  const [stats, setStats] = useState({});
-  const [employees, setEmployees] = useState([]);
+const [stats, setStats] = useState({});
+const [employees, setEmployees] = useState([]);
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
+useEffect(() => {
+loadDashboard();
+}, []);
 
-  const loadDashboard = async () => {
-    try {
+const loadDashboard = async () => {
 
-      const token = localStorage.getItem("token");
+try{
 
-      console.log("TOKEN:", token);
+const token = localStorage.getItem("token");
 
-      const dashboardRes = await api.get(
-        "/dashboard",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+const dashboardRes = await api.get(
+"/dashboard",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
 
-      console.log("Dashboard Data:", dashboardRes.data);
+const usersRes = await api.get("/users");
 
-      const usersRes = await api.get("/users");
+setStats(dashboardRes.data);
+setEmployees(usersRes.data);
 
-      console.log("Users:", usersRes.data);
+}catch(error){
 
-      setStats(dashboardRes.data);
-      setEmployees(usersRes.data);
+console.log(error);
 
-    } catch(error) {
+}
 
-      console.log("FULL ERROR:", error);
+};
 
-    }
-  };
+return(
 
-  return (
-    <div>
+<div
+style={{
+padding:"20px"
+}}
+>
 
-      <h1>Admin Dashboard</h1>
+<h1
+style={{
+textAlign:"center"
+}}
+>
+Employee Performance Dashboard
+</h1>
 
-      <h3>Total Employees: {stats.totalEmployees}</h3>
-      <h3>Total Tasks: {stats.totalTasks}</h3>
-      <h3>Completed Tasks: {stats.completedTasks}</h3>
-      <h3>Pending Tasks: {stats.pendingTasks}</h3>
-      <h3>Total Reviews: {stats.totalReviews}</h3>
+<div
+style={{
+display:"flex",
+justifyContent:"center",
+gap:"20px",
+flexWrap:"wrap",
+marginTop:"30px"
+}}
+>
 
-      <hr/>
+<div
+style={{
+border:"1px solid gray",
+padding:"20px",
+width:"200px",
+textAlign:"center"
+}}
+>
+<h3>Total Employees</h3>
+<h1>{stats.totalEmployees}</h1>
+</div>
 
-      <h2>Employees</h2>
+<div
+style={{
+border:"1px solid gray",
+padding:"20px",
+width:"200px",
+textAlign:"center"
+}}
+>
+<h3>Total Tasks</h3>
+<h1>{stats.totalTasks}</h1>
+</div>
 
-      {employees.map((emp)=>(
-        <p key={emp.id}>
-          {emp.name} | {emp.email}
-        </p>
-      ))}
+<div
+style={{
+border:"1px solid gray",
+padding:"20px",
+width:"200px",
+textAlign:"center"
+}}
+>
+<h3>Completed Tasks</h3>
+<h1>{stats.completedTasks}</h1>
+</div>
 
-    </div>
-  );
+<div
+style={{
+border:"1px solid gray",
+padding:"20px",
+width:"200px",
+textAlign:"center"
+}}
+>
+<h3>Total Reviews</h3>
+<h1>{stats.totalReviews}</h1>
+</div>
+
+</div>
+
+<hr/>
+
+<h2>Employee List</h2>
+
+{employees.map((emp)=>(
+
+<div
+key={emp.id}
+style={{
+border:"1px solid lightgray",
+padding:"10px",
+margin:"10px"
+}}
+>
+
+<p><b>Name:</b> {emp.name}</p>
+<p><b>Email:</b> {emp.email}</p>
+
+</div>
+
+))}
+
+</div>
+
+);
+
 }
 
 export default Dashboard;

@@ -1,104 +1,68 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import authMiddleware from "../middleware/authMiddleware.js";
-import roleMiddleware from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-
-// Add performance review (Admin only)
 router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+"/",
+authMiddleware,
+async(req,res)=>{
 
-      const {
-        employeeId,
-        rating,
-        kpi,
-        review
-      } = req.body;
+try{
 
-      const performance =
-      await prisma.performance.create({
-        data: {
-          employeeId,
-          rating,
-          kpi,
-          review
-        }
-      });
+const {rating,feedback}=req.body;
 
-      res.status(201).json({
-        message: "Performance added",
-        performance
-      });
+const review=await prisma.performance.create({
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+data:{
+employeeId:1,
+rating:Number(rating),
+kpi:"Overall Performance",
+review:feedback
+}
+
+});
+
+res.json(review);
+
+}catch(error){
+
+console.log("Backend Error:",error);
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 
-// Get all reviews
 router.get(
-  "/",
-  authMiddleware,
-  async (req, res) => {
-    try {
+"/",
+authMiddleware,
+async(req,res)=>{
 
-      const performances =
-      await prisma.performance.findMany({
-        include: {
-          employee: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
-        }
-      });
+try{
 
-      res.json(performances);
+const reviews=await prisma.performance.findMany();
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
-);
+res.json(reviews);
 
+}catch(error){
 
-// Get review by employee id
-router.get(
-  "/:id",
-  authMiddleware,
-  async (req, res) => {
-    try {
+console.log(error);
 
-      const performance =
-      await prisma.performance.findMany({
-        where: {
-          employeeId: Number(req.params.id)
-        }
-      });
+res.status(500).json({
+error:error.message
+});
 
-      res.json(performance);
+}
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+}
 );
 
 export default router;

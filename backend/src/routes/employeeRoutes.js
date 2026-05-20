@@ -8,167 +8,208 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 
-// Get all employees (Admin only)
+// Get all employees
 router.get(
-  "/",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
-      const employees = await prisma.user.findMany({
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          createdAt: true
-        }
-      });
+"/",
+authMiddleware,
+roleMiddleware("Admin"),
+async(req,res)=>{
 
-      res.json(employees);
+try{
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+const employees=await prisma.user.findMany({
+
+select:{
+id:true,
+name:true,
+email:true,
+role:true,
+createdAt:true
+}
+
+});
+
+res.json(employees);
+
+}catch(error){
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 
 // Get employee by id
 router.get(
-  "/:id",
-  authMiddleware,
-  async (req, res) => {
-    try {
+"/:id",
+authMiddleware,
+async(req,res)=>{
 
-      const employee = await prisma.user.findUnique({
-        where: {
-          id: Number(req.params.id)
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          createdAt: true
-        }
-      });
+try{
 
-      if (!employee) {
-        return res.status(404).json({
-          message: "Employee not found"
-        });
-      }
+const employee=await prisma.user.findUnique({
 
-      res.json(employee);
+where:{
+id:Number(req.params.id)
+},
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+select:{
+id:true,
+name:true,
+email:true,
+role:true,
+createdAt:true
+}
+
+});
+
+if(!employee){
+
+return res.status(404).json({
+message:"Employee not found"
+});
+
+}
+
+res.json(employee);
+
+}catch(error){
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 
-// Create employee (Admin only)
+// Create employee
 router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+"/",
+authMiddleware,
+roleMiddleware("Admin"),
+async(req,res)=>{
 
-      const { name, email, password, role } = req.body;
+try{
 
-      const hashedPassword = await bcrypt.hash(
-        password,
-        10
-      );
+const {name,email}=req.body;
 
-      const employee = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-          role
-        }
-      });
+const hashedPassword=await bcrypt.hash(
+"123456",
+10
+);
 
-      res.status(201).json({
-        message: "Employee created",
-        employee
-      });
+const employee=await prisma.user.create({
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+data:{
+name,
+email,
+password:hashedPassword,
+role:"Employee"
+}
+
+});
+
+res.status(201).json({
+
+message:"Employee created",
+employee
+
+});
+
+}catch(error){
+
+console.log(error);
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 
 // Update employee
 router.put(
-  "/:id",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+"/:id",
+authMiddleware,
+roleMiddleware("Admin"),
+async(req,res)=>{
 
-      const { name, role } = req.body;
+try{
 
-      const employee = await prisma.user.update({
-        where: {
-          id: Number(req.params.id)
-        },
-        data: {
-          name,
-          role
-        }
-      });
+const {name,role}=req.body;
 
-      res.json({
-        message: "Employee updated",
-        employee
-      });
+const employee=await prisma.user.update({
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+where:{
+id:Number(req.params.id)
+},
+
+data:{
+name,
+role
+}
+
+});
+
+res.json({
+
+message:"Employee updated",
+employee
+
+});
+
+}catch(error){
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 
 // Delete employee
 router.delete(
-  "/:id",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+"/:id",
+authMiddleware,
+roleMiddleware("Admin"),
+async(req,res)=>{
 
-      await prisma.user.delete({
-        where: {
-          id: Number(req.params.id)
-        }
-      });
+try{
 
-      res.json({
-        message: "Employee deleted"
-      });
+await prisma.user.delete({
 
-    } catch (error) {
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
+where:{
+id:Number(req.params.id)
+}
+
+});
+
+res.json({
+message:"Employee deleted"
+});
+
+}catch(error){
+
+res.status(500).json({
+error:error.message
+});
+
+}
+
+}
 );
 
 export default router;
