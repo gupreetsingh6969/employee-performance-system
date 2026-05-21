@@ -1,0 +1,76 @@
+EMPLOYEE PERFORMANCE SYSTEM - TESTING REPORT
+
+TEST CASE 1
+Module: Login
+Input:
+Email + Password
+Expected Result:
+User logs in successfully
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 2
+Module: Signup
+Input:
+Name + Email + Password
+Expected Result:
+New account created successfully
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 3
+Module: Dashboard
+Input:
+Employee and Task data
+Expected Result:
+Charts and analytics displayed
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 4
+Module: Task Management
+Input:
+Create and update task
+Expected Result:
+Task saved and status updated
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 5
+Module: Performance Reviews
+Input:
+KPI + Rating + Review
+Expected Result:
+Review stored and displayed
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 6
+Module: AI Recommendations
+Input:
+Employee ratings
+Expected Result:
+Prediction and recommendation generated
+Status:
+PASSED
+
+--------------------------------
+
+TEST CASE 7
+Module: Notifications
+Input:
+Notification data
+Expected Result:
+Notifications displayed correctly
+Status:
+PASSED

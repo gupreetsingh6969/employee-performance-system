@@ -1,154 +1,145 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import { useState } from "react";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+function Employee() {
 
-import { Bar, Pie } from "react-chartjs-2";
+const [employees,setEmployees]=useState([]);
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend
+const [name,setName]=useState("");
+const [position,setPosition]=useState("");
+
+const addEmployee=()=>{
+
+if(!name || !position) return;
+
+setEmployees([
+...employees,
+{
+id:Date.now(),
+name,
+position
+}
+]);
+
+setName("");
+setPosition("");
+
+};
+
+const deleteEmployee=(id)=>{
+
+setEmployees(
+employees.filter(
+(emp)=>emp.id!==id
+)
 );
 
-function Dashboard() {
-  const [stats, setStats] = useState({});
-  const [employees, setEmployees] = useState([]);
+};
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
+return(
 
-  const loadDashboard = async () => {
-    try {
-      const token = localStorage.getItem("token");
+<div
+style={{
+padding:"20px",
+textAlign:"center"
+}}
+>
 
-      const dashboardRes = await api.get("/dashboard", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+<h1
+style={{
+fontSize:"50px",
+marginBottom:"30px"
+}}
+>
+Employee Management
+</h1>
 
-      const usersRes = await api.get("/users");
+<div
+style={{
+marginBottom:"20px"
+}}
+>
 
-      setStats(dashboardRes.data);
-      setEmployees(usersRes.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+<input
+type="text"
+placeholder="Employee Name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+style={{
+padding:"10px",
+marginRight:"10px"
+}}
+/>
 
-  // Charts data
-  const taskChartData = {
-    labels: ["Completed", "Pending"],
-    datasets: [
-      {
-        label: "Tasks",
-        data: [
-          stats.completedTasks || 0,
-          (stats.totalTasks || 0) - (stats.completedTasks || 0)
-        ],
-        backgroundColor: ["#4caf50", "#ff9800"]
-      }
-    ]
-  };
+<input
+type="text"
+placeholder="Position"
+value={position}
+onChange={(e)=>setPosition(e.target.value)}
+style={{
+padding:"10px",
+marginRight:"10px"
+}}
+/>
 
-  const employeeChartData = {
-    labels: ["Employees", "Reviews"],
-    datasets: [
-      {
-        label: "Analytics",
-        data: [stats.totalEmployees || 0, stats.totalReviews || 0],
-        backgroundColor: ["#2196f3", "#9c27b0"]
-      }
-    ]
-  };
+<button
+onClick={addEmployee}
+style={{
+padding:"10px"
+}}
+>
+Add Employee
+</button>
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>Employee Performance Dashboard</h1>
+</div>
 
-      {/* Stats Boxes */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          flexWrap: "wrap",
-          marginTop: "30px"
-        }}
-      >
-        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
-          <h3>Total Employees</h3>
-          <h1>{stats.totalEmployees}</h1>
-        </div>
-        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
-          <h3>Total Tasks</h3>
-          <h1>{stats.totalTasks}</h1>
-        </div>
-        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
-          <h3>Completed Tasks</h3>
-          <h1>{stats.completedTasks}</h1>
-        </div>
-        <div style={{ border: "1px solid gray", padding: "20px", width: "200px", textAlign: "center" }}>
-          <h3>Total Reviews</h3>
-          <h1>{stats.totalReviews}</h1>
-        </div>
-      </div>
+<hr/>
 
-      <hr />
+<div
+style={{
+display:"flex",
+flexWrap:"wrap",
+justifyContent:"center",
+gap:"20px",
+marginTop:"20px"
+}}
+>
 
-      {/* Charts */}
-      <h2>Analytics Dashboard</h2>
-      <div
-        style={{
-          display: "flex",
-          gap: "50px",
-          flexWrap: "wrap",
-          justifyContent: "center"
-        }}
-      >
-        <div style={{ width: "400px" }}>
-          <Bar data={employeeChartData} />
-        </div>
-        <div style={{ width: "400px" }}>
-          <Pie data={taskChartData} />
-        </div>
-      </div>
+{
 
-      <hr />
+employees.map((emp)=>(
 
-      {/* Navigation Buttons */}
-      <div style={{ margin: "20px 0", display: "flex", gap: "20px", justifyContent: "center" }}>
-        <button onClick={() => window.location.href = "/notifications"}>View Notifications</button>
-        <button onClick={() => window.location.href = "/ai"}>View AI Recommendations</button>
-      </div>
+<div
+key={emp.id}
+style={{
+border:"1px solid lightgray",
+padding:"20px",
+width:"250px",
+borderRadius:"10px"
+}}
+>
 
-      <hr />
+<h3>{emp.name}</h3>
 
-      {/* Employee List */}
-      <h2>Employee List</h2>
-      {employees.map((emp) => (
-        <div
-          key={emp.id}
-          style={{ border: "1px solid lightgray", padding: "10px", margin: "10px" }}
-        >
-          <p><b>Name:</b> {emp.name}</p>
-          <p><b>Email:</b> {emp.email}</p>
-          <p><b>Role:</b> {emp.role}</p>
-        </div>
-      ))}
-    </div>
-  );
+<p>{emp.position}</p>
+
+<button
+onClick={()=>deleteEmployee(emp.id)}
+>
+Delete
+</button>
+
+</div>
+
+))
+
 }
 
-export default Dashboard;
+</div>
+
+</div>
+
+);
+
+}
+
+export default Employee;

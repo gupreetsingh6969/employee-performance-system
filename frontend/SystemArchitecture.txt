@@ -1,0 +1,40 @@
+EMPLOYEE PERFORMANCE SYSTEM - SYSTEM ARCHITECTURE
+
+Frontend:
+- React.js
+- Vite
+- Axios
+- Chart.js
+
+Backend:
+- Node.js
+- Express.js
+
+Database:
+- Prisma ORM
+- SQLite/MySQL
+
+Authentication:
+- JWT Authentication
+- Role-based access (Admin / HR / Manager)
+
+Modules:
+1. Login & Signup
+2. Employee Management
+3. Task Management
+4. Performance Reviews
+5. AI Recommendation System
+6. Dashboard Analytics
+7. Notifications
+
+Workflow:
+
+User Login
+      ↓
+Authentication (JWT)
+      ↓
+Backend API
+      ↓
+Database
+      ↓
+Dashboard / Tasks / Reviews / AI / Notifications

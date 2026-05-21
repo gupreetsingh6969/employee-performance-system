@@ -1,0 +1,57 @@
+EMPLOYEE PERFORMANCE SYSTEM - USER GUIDE
+
+Step 1:
+Open application
+
+Frontend:
+http://localhost:5173
+
+Step 2:
+Login or Signup
+
+Enter:
+- Email
+- Password
+
+Step 3:
+Dashboard
+
+Features:
+- Total Employees
+- Total Tasks
+- Completed Tasks
+- Reviews
+- Analytics charts
+
+Step 4:
+Task Management
+
+Users can:
+- Create tasks
+- View tasks
+- Update task status
+- Track deadlines
+
+Step 5:
+Performance Reviews
+
+Users can:
+- Add employee performance
+- Add KPI details
+- Add ratings
+- View review history
+
+Step 6:
+AI Recommendations
+
+System generates:
+- Top Performer
+- Average Performer
+- Training recommendation
+
+Step 7:
+Notifications
+
+Users receive:
+- Deadline reminders
+- Feedback updates

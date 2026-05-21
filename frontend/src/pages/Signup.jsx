@@ -2,96 +2,109 @@ import { useState } from "react";
 import api from "../services/api";
 
 function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {
-    if (!name || !email || !password) {
-      alert("All fields are required");
-      return;
-    }
+const [name,setName]=useState("");
+const [email,setEmail]=useState("");
+const [password,setPassword]=useState("");
+const [loading,setLoading]=useState(false);
 
-    try {
-      setLoading(true);
+const handleSignup = async ()=>{
 
-      const response = await api.post("/api/auth/register", {
-        name: name.trim(),
-        email: email.trim(),
-        password: password.trim(),
-        role: "ADMIN"
-      });
+try{
 
-      console.log("Signup Success:", response.data);
-      alert(response.data.message || "Signup Successful");
-      window.location.href = "/";
+setLoading(true);
 
-    } catch (error) {
-      console.error("Signup Error Full:", error);
-      console.error("Signup Error Response:", error.response);
+const response = await api.post(
+"/api/auth/register",
+{
+name:name.trim(),
+email:email.trim(),
+password:password.trim(),
+role:"ADMIN"
+}
+);
 
-      alert(
-        error?.response?.data?.message ||
-        error?.response?.data?.error ||
-        "Signup Failed"
-      );
+console.log("Signup:",response.data);
 
-    } finally {
-      setLoading(false);
-    }
-  };
+alert("Signup Successful");
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        marginTop: "100px"
-      }}
-    >
-      <h1>Admin Signup</h1>
+window.location.href="/";
 
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ padding: "10px", width: "250px" }}
-      />
+}
+catch(error){
 
-      <br />
+console.log("Signup Error:",error);
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ padding: "10px", width: "250px" }}
-      />
+console.log(
+error?.response?.data
+);
 
-      <br />
+alert(
+error?.response?.data?.message ||
+error?.response?.data?.error ||
+"Signup Failed"
+);
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ padding: "10px", width: "250px" }}
-      />
+}
+finally{
 
-      <br />
+setLoading(false);
 
-      <button
-        onClick={handleSignup}
-        disabled={loading}
-        style={{ padding: "10px", width: "120px" }}
-      >
-        {loading ? "Creating..." : "Sign Up"}
-      </button>
-    </div>
-  );
+}
+
+};
+
+return(
+
+<div
+style={{
+display:"flex",
+flexDirection:"column",
+alignItems:"center",
+marginTop:"100px"
+}}
+>
+
+<h1>Admin Signup</h1>
+
+<input
+type="text"
+placeholder="Name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+/>
+
+<br/>
+
+<input
+type="email"
+placeholder="Email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+/>
+
+<br/>
+
+<input
+type="password"
+placeholder="Password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+/>
+
+<br/>
+
+<button
+onClick={handleSignup}
+disabled={loading}
+>
+{loading ? "Creating..." : "Sign Up"}
+</button>
+
+</div>
+
+);
+
 }
 
 export default Signup;
