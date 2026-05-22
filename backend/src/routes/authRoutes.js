@@ -6,53 +6,104 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Register
-router.post("/register", async (req, res) => {
+/*
+Creates a new employee profile and stores credentials securely
+*/
+router.post("/createEmployeeProfile", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) return res.status(400).json({ message: "User exists" });
+    const employeeRecord = await prisma.user.findUnique({
+      where: { email }
+    });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (employeeRecord) {
+      return res.status(400).json({
+        message: "Employee account already exists"
+      });
+    }
 
-    const user = await prisma.user.create({
+    const securePassword = await bcrypt.hash(password, 10);
+
+    const createdEmployee = await prisma.user.create({
       data: {
         name,
         email,
-        password: hashedPassword,
-        role, // must match enum: "EMPLOYEE"|"ADMIN"|"HR"|"MANAGER"
-      },
+        password: securePassword,
+        role
+      }
     });
 
     res.status(201).json({
-      message: "User registered successfully",
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      message: "Employee profile created successfully",
+      employee: {
+        id: createdEmployee.id,
+        name: createdEmployee.name,
+        email: createdEmployee.email,
+        role: createdEmployee.role
+      }
     });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
   }
 });
 
-// Login
-router.post("/login", async (req, res) => {
+
+/*
+Verifies employee login information before dashboard access
+*/
+router.post("/validateEmployeeLogin", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(400).json({ message: "User not found" });
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(400).json({ message: "Invalid password" });
+    const employeeRecord = await prisma.user.findUnique({
+      where: { email }
+    });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    if (!employeeRecord) {
+      return res.status(400).json({
+        message: "Employee record not found"
+      });
+    }
 
-    res.json({ message: "Login successful", token });
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      employeeRecord.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        message: "Entered password is incorrect"
+      });
+    }
+
+    const accessToken = jwt.sign(
+      {
+        id: employeeRecord.id,
+        role: employeeRecord.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d"
+      }
+    );
+
+    res.json({
+      message: "Employee login verified successfully",
+      token: accessToken
+    });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
   }
 });
 

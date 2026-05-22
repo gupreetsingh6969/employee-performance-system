@@ -19,8 +19,7 @@ const response = await api.post(
 {
 name:name.trim(),
 email:email.trim(),
-password:password.trim(),
-role:"ADMIN"
+password:password.trim()
 }
 );
 
@@ -34,10 +33,6 @@ window.location.href="/";
 catch(error){
 
 console.log("Signup Error:",error);
-
-console.log(
-error?.response?.data
-);
 
 alert(
 error?.response?.data?.message ||
@@ -65,7 +60,7 @@ marginTop:"100px"
 }}
 >
 
-<h1>Admin Signup</h1>
+<h1>Employee Signup</h1>
 
 <input
 type="text"

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
 
 function Tasks() {
 
@@ -10,73 +9,68 @@ const [deadline,setDeadline]=useState("");
 
 useEffect(()=>{
 
-loadTasks();
+const savedTasks=
+JSON.parse(
+localStorage.getItem("tasks")
+) || [];
+
+setTasks(savedTasks);
 
 },[]);
 
-const loadTasks=async()=>{
+const createTask=()=>{
 
-try{
+if(!title || !description) return;
 
-const response=await api.get("/tasks");
+const newTask={
 
-setTasks(response.data);
-
-}catch(error){
-
-console.log(error);
-
-}
+id:Date.now(),
+title,
+description,
+deadline,
+status:"Pending"
 
 };
 
-const createTask=async()=>{
+const updatedTasks=[
 
-try{
+...tasks,
+newTask
 
-await api.post("/tasks",{
+];
 
-title,
-description,
-deadline
+setTasks(updatedTasks);
 
-});
-
-alert("Task Added");
+localStorage.setItem(
+"tasks",
+JSON.stringify(updatedTasks)
+);
 
 setTitle("");
 setDescription("");
 setDeadline("");
 
-loadTasks();
-
-}catch(error){
-
-console.log(error);
-
-alert("Task creation failed");
-
-}
+alert("Task Added");
 
 };
 
-const updateStatus=async(id,status)=>{
+const updateStatus=(id)=>{
 
-try{
+const updatedTasks=
+tasks.map((task)=>
 
-await api.put(`/tasks/${id}`,{
+task.id===id
+? {...task,status:"Completed"}
+: task
 
-status
+);
 
-});
+setTasks(updatedTasks);
 
-loadTasks();
-
-}catch(error){
-
-console.log(error);
-
-}
+localStorage.setItem(
+"tasks",
+JSON.stringify(updatedTasks)
+);
 
 };
 
@@ -143,10 +137,7 @@ margin:"10px"
 
 <button
 onClick={()=>
-updateStatus(
-task.id,
-"Completed"
-)
+updateStatus(task.id)
 }
 >
 

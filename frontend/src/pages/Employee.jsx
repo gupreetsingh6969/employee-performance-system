@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Employee() {
 
 const [employees,setEmployees]=useState([]);
-
 const [name,setName]=useState("");
 const [position,setPosition]=useState("");
+
+useEffect(()=>{
+
+const savedEmployees=
+JSON.parse(
+localStorage.getItem("employees")
+) || [];
+
+setEmployees(savedEmployees);
+
+},[]);
 
 const addEmployee=()=>{
 
 if(!name || !position) return;
 
-setEmployees([
-...employees,
-{
+const newEmployee={
+
 id:Date.now(),
 name,
 position
-}
-]);
+
+};
+
+const updatedEmployees=[
+...employees,
+newEmployee
+];
+
+setEmployees(updatedEmployees);
+
+localStorage.setItem(
+"employees",
+JSON.stringify(updatedEmployees)
+);
 
 setName("");
 setPosition("");
@@ -27,10 +48,16 @@ setPosition("");
 
 const deleteEmployee=(id)=>{
 
-setEmployees(
+const updatedEmployees=
 employees.filter(
 (emp)=>emp.id!==id
-)
+);
+
+setEmployees(updatedEmployees);
+
+localStorage.setItem(
+"employees",
+JSON.stringify(updatedEmployees)
 );
 
 };
@@ -44,30 +71,13 @@ textAlign:"center"
 }}
 >
 
-<h1
-style={{
-fontSize:"50px",
-marginBottom:"30px"
-}}
->
-Employee Management
-</h1>
-
-<div
-style={{
-marginBottom:"20px"
-}}
->
+<h1>Employee Management</h1>
 
 <input
 type="text"
 placeholder="Employee Name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
-style={{
-padding:"10px",
-marginRight:"10px"
-}}
 />
 
 <input
@@ -75,55 +85,27 @@ type="text"
 placeholder="Position"
 value={position}
 onChange={(e)=>setPosition(e.target.value)}
-style={{
-padding:"10px",
-marginRight:"10px"
-}}
 />
 
-<button
-onClick={addEmployee}
-style={{
-padding:"10px"
-}}
->
+<button onClick={addEmployee}>
 Add Employee
 </button>
 
-</div>
-
 <hr/>
-
-<div
-style={{
-display:"flex",
-flexWrap:"wrap",
-justifyContent:"center",
-gap:"20px",
-marginTop:"20px"
-}}
->
 
 {
 
 employees.map((emp)=>(
 
-<div
-key={emp.id}
-style={{
-border:"1px solid lightgray",
-padding:"20px",
-width:"250px",
-borderRadius:"10px"
-}}
->
+<div key={emp.id}>
 
 <h3>{emp.name}</h3>
-
 <p>{emp.position}</p>
 
 <button
-onClick={()=>deleteEmployee(emp.id)}
+onClick={()=>
+deleteEmployee(emp.id)
+}
 >
 Delete
 </button>
@@ -133,8 +115,6 @@ Delete
 ))
 
 }
-
-</div>
 
 </div>
 

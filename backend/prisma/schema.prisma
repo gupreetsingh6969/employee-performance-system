@@ -15,39 +15,39 @@ enum Role {
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
-  name          String
-  email         String          @unique
-  password      String
-  role          Role            @default(EMPLOYEE)
-  createdAt     DateTime        @default(now())
+  id           Int @id @default(autoincrement())
+  name         String
+  email        String @unique
+  password     String
+  role         Role @default(EMPLOYEE)
+  createdAt    DateTime @default(now())
 
-  performances  Performance[]
-  tasks         Task[]
+  performances Performance[]
+  tasks        Task[]
 }
 
 model Performance {
-  id           Int      @id @default(autoincrement())
-  employeeId   Int
-  rating       Int
-  kpi          String
-  review       String
-  reviewDate   DateTime @default(now())
+  id          Int @id @default(autoincrement())
+  employeeId  Int
+  rating      Int
+  kpi         String
+  review      String
+  reviewDate  DateTime @default(now())
 
-  employee     User @relation(fields: [employeeId], references: [id])
+  employee User @relation(fields:[employeeId], references:[id])
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Task {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  status       String   @default("Pending")
-  deadline     DateTime
+  id          Int @id @default(autoincrement())
+  title       String
+  description String
+  status      String @default("Pending")
+  deadline    DateTime
 
-  employeeId   Int
-  employee     User @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  employee User @relation(fields:[employeeId], references:[id])
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 }
