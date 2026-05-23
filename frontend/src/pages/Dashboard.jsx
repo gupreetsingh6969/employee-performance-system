@@ -1,8 +1,8 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
-function Dashboard(){
+function Dashboard() {
 
-const [statistics,setStatistics]=useState({
+const [statistics, setStatistics] = useState({
 
 employees:0,
 pendingTasks:0,
@@ -11,8 +11,9 @@ performanceScore:0
 
 });
 
+const [activityList,setActivityList] = useState([]);
 
-useEffect(()=>{
+const loadDashboardData = ()=>{
 
 setStatistics({
 
@@ -22,6 +23,21 @@ completedTasks:17,
 performanceScore:91
 
 });
+
+setActivityList([
+
+"Task assigned to employee team",
+"Performance review updated",
+"Achievement record added"
+
+]);
+
+};
+
+
+useEffect(()=>{
+
+loadDashboardData();
 
 },[]);
 
@@ -36,10 +52,23 @@ Employee Performance Dashboard
 </h1>
 
 <p>
-Overview of employee activities and performance
+Welcome to the employee monitoring system
 </p>
 
 <br/>
+
+<button
+onClick={loadDashboardData}
+style={{
+padding:"10px",
+cursor:"pointer"
+}}
+>
+Refresh Dashboard
+</button>
+
+<br/><br/>
+
 
 <div
 style={{
@@ -51,12 +80,15 @@ flexWrap:"wrap"
 }}
 >
 
+
 <div
 style={{
+
 border:"1px solid #d1d5db",
 padding:"20px",
 width:"220px",
 borderRadius:"10px"
+
 }}
 >
 
@@ -69,12 +101,15 @@ borderRadius:"10px"
 </div>
 
 
+
 <div
 style={{
+
 border:"1px solid #d1d5db",
 padding:"20px",
 width:"220px",
 borderRadius:"10px"
+
 }}
 >
 
@@ -87,12 +122,15 @@ borderRadius:"10px"
 </div>
 
 
+
 <div
 style={{
+
 border:"1px solid #d1d5db",
 padding:"20px",
 width:"220px",
 borderRadius:"10px"
+
 }}
 >
 
@@ -105,12 +143,15 @@ borderRadius:"10px"
 </div>
 
 
+
 <div
 style={{
+
 border:"1px solid #d1d5db",
 padding:"20px",
 width:"220px",
 borderRadius:"10px"
+
 }}
 >
 
@@ -124,23 +165,33 @@ borderRadius:"10px"
 
 </div>
 
+
 <hr/>
 
-<h2>Recent Activities</h2>
+<h2>
+Recent Activities
+</h2>
 
 <div
 style={{
 border:"1px solid gray",
 padding:"15px",
-marginTop:"10px"
+marginTop:"10px",
+borderRadius:"10px"
 }}
 >
 
-<p>Task assigned to Employee Team</p>
+{
 
-<p>Performance review updated</p>
+activityList.map((item,index)=>(
 
-<p>Achievement added</p>
+<p key={index}>
+• {item}
+</p>
+
+))
+
+}
 
 </div>
 

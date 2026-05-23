@@ -2,6 +2,8 @@ import { useState } from "react";
 
 function Tasks(){
 
+const [taskList,setTaskList] = useState([]);
+
 const [taskInfo,setTaskInfo] = useState({
 
 title:"",
@@ -10,39 +12,35 @@ deadline:""
 
 });
 
-const [taskRecords,setTaskRecords] = useState([]);
 
-
-const createTask=()=>{
+const addTask = ()=>{
 
 if(
 !taskInfo.title ||
-!taskInfo.description
+!taskInfo.description ||
+!taskInfo.deadline
 ){
-
 alert("Fill all fields");
-
 return;
-
 }
 
-const newTask={
+const newTask = {
 
-id:Date.now(),
+id: Date.now(),
 
-title:taskInfo.title,
+title: taskInfo.title,
 
-description:taskInfo.description,
+description: taskInfo.description,
 
-deadline:taskInfo.deadline,
+deadline: taskInfo.deadline,
 
 status:"Pending"
 
 };
 
-setTaskRecords([
+setTaskList([
 
-...taskRecords,
+...taskList,
 newTask
 
 ]);
@@ -58,22 +56,21 @@ deadline:""
 };
 
 
-const updateTaskStatus=(taskId)=>{
+const changeTaskStatus = (id)=>{
 
-const updatedTasks=
+const updatedTaskList = taskList.map((task)=>{
 
-taskRecords.map((task)=>{
-
-if(task.id===taskId){
+if(task.id===id){
 
 return{
 
 ...task,
-
 status:
 task.status==="Pending"
-? "Completed"
-: "Pending"
+?
+"Completed"
+:
+"Pending"
 
 };
 
@@ -83,22 +80,20 @@ return task;
 
 });
 
-setTaskRecords(updatedTasks);
+setTaskList(updatedTaskList);
 
 };
 
 
-const removeTask=(taskId)=>{
+const deleteTask=(id)=>{
 
-const remainingTasks=
+const filteredTasks =
 
-taskRecords.filter(
-
-(task)=>task.id!==taskId
-
+taskList.filter(
+(task)=>task.id!==id
 );
 
-setTaskRecords(remainingTasks);
+setTaskList(filteredTasks);
 
 };
 
@@ -111,15 +106,12 @@ return(
 <h1>Task Management</h1>
 
 <input
-type="text"
 placeholder="Task Title"
 value={taskInfo.title}
 onChange={(e)=>
 setTaskInfo({
-
 ...taskInfo,
 title:e.target.value
-
 })
 }
 />
@@ -127,15 +119,12 @@ title:e.target.value
 <br/><br/>
 
 <input
-type="text"
 placeholder="Task Description"
 value={taskInfo.description}
 onChange={(e)=>
 setTaskInfo({
-
 ...taskInfo,
 description:e.target.value
-
 })
 }
 />
@@ -147,22 +136,16 @@ type="date"
 value={taskInfo.deadline}
 onChange={(e)=>
 setTaskInfo({
-
 ...taskInfo,
 deadline:e.target.value
-
 })
 }
 />
 
 <br/><br/>
 
-<button
-onClick={createTask}
->
-
+<button onClick={addTask}>
 Add Task
-
 </button>
 
 <hr/>
@@ -171,34 +154,33 @@ Add Task
 
 {
 
-taskRecords.map((task)=>(
+taskList.map((task)=>(
 
 <div
 key={task.id}
 style={{
-
 border:"1px solid gray",
 padding:"15px",
-marginBottom:"10px"
-
+margin:"10px",
+borderRadius:"10px"
 }}
 >
 
-<h3>{task.title}</h3>
-
-<p>{task.description}</p>
-
 <p>
-Deadline: {task.deadline}
+Title: {task.title}
 </p>
 
 <p>
 Status: {task.status}
 </p>
 
+<p>
+Deadline: {task.deadline}
+</p>
+
 <button
 onClick={()=>
-updateTaskStatus(task.id)
+changeTaskStatus(task.id)
 }
 >
 
@@ -207,12 +189,12 @@ Update Status
 </button>
 
 <button
+onClick={()=>
+deleteTask(task.id)
+}
 style={{
 marginLeft:"10px"
 }}
-onClick={()=>
-removeTask(task.id)
-}
 >
 
 Delete
