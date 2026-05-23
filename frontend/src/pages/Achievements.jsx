@@ -1,116 +1,170 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function Achievements() {
+function Achievements(){
 
-const [achievements,setAchievements]=useState([]);
-const [title,setTitle]=useState("");
+const [achievementInfo,setAchievementInfo] = useState({
 
-useEffect(()=>{
+employee:"",
+title:"",
+description:""
 
-const storedAchievements =
-JSON.parse(
-localStorage.getItem("achievements")
-) || [];
+});
 
-setAchievements(storedAchievements);
+const [achievementList,setAchievementList] = useState([]);
 
-},[]);
 
 const addAchievement=()=>{
 
-if(!title.trim()) return;
+if(
+!achievementInfo.employee ||
+!achievementInfo.title
+){
+
+alert("Required fields missing");
+
+return;
+
+}
 
 const newAchievement={
 
 id:Date.now(),
-title:title.trim()
+
+employee:achievementInfo.employee,
+
+title:achievementInfo.title,
+
+description:achievementInfo.description
 
 };
 
-const updatedAchievements=[
+setAchievementList([
 
-...achievements,
+...achievementList,
 newAchievement
 
-];
+]);
 
-setAchievements(updatedAchievements);
+setAchievementInfo({
 
-localStorage.setItem(
-"achievements",
-JSON.stringify(updatedAchievements)
-);
+employee:"",
+title:"",
+description:""
 
-setTitle("");
+});
 
 };
+
+
 
 const deleteAchievement=(id)=>{
 
-const updatedAchievements=
-achievements.filter(
-(item)=>
-item.id!==id
+const updated=
+
+achievementList.filter(
+
+(item)=>item.id!==id
+
 );
 
-setAchievements(updatedAchievements);
-
-localStorage.setItem(
-"achievements",
-JSON.stringify(updatedAchievements)
-);
+setAchievementList(updated);
 
 };
+
+
 
 return(
 
 <div style={{padding:"20px"}}>
 
-<h1>Employee Achievements</h1>
+<h1>
+Employee Achievements
+</h1>
 
 <input
 type="text"
-placeholder="Achievement"
-value={title}
+placeholder="Employee Name"
+value={achievementInfo.employee}
 onChange={(e)=>
-setTitle(e.target.value)
+setAchievementInfo({
+
+...achievementInfo,
+employee:e.target.value
+
+})
 }
 />
 
+<br/><br/>
+
+<input
+type="text"
+placeholder="Achievement Title"
+value={achievementInfo.title}
+onChange={(e)=>
+setAchievementInfo({
+
+...achievementInfo,
+title:e.target.value
+
+})
+}
+/>
+
+<br/><br/>
+
+<textarea
+placeholder="Description"
+value={achievementInfo.description}
+onChange={(e)=>
+setAchievementInfo({
+
+...achievementInfo,
+description:e.target.value
+
+})
+}
+/>
+
+<br/><br/>
+
 <button
 onClick={addAchievement}
-style={{marginLeft:"10px"}}
 >
 
-Add
+Add Achievement
 
 </button>
 
 <hr/>
 
+<h2>
+Achievement Records
+</h2>
+
 {
 
-achievements.map((item)=>(
+achievementList.map((item)=>(
 
 <div
 key={item.id}
 style={{
-border:"1px solid lightgray",
-padding:"10px",
-margin:"10px",
-borderRadius:"8px"
+border:"1px solid gray",
+padding:"15px",
+marginBottom:"10px"
 }}
 >
 
-🏆 {item.title}
+<h3>{item.title}</h3>
+
+<p>Employee: {item.employee}</p>
+
+<p>{item.description}</p>
 
 <button
 onClick={()=>
 deleteAchievement(item.id)
 }
-style={{
-marginLeft:"20px"
-}}
 >
 
 Delete
