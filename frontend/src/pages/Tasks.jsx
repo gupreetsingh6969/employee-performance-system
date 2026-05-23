@@ -1,78 +1,108 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-function Tasks() {
+function Tasks(){
 
-const [tasks,setTasks]=useState([]);
-const [title,setTitle]=useState("");
-const [description,setDescription]=useState("");
-const [deadline,setDeadline]=useState("");
+const [taskInfo,setTaskInfo] = useState({
 
-useEffect(()=>{
+title:"",
+description:"",
+deadline:""
 
-const savedTasks=
-JSON.parse(
-localStorage.getItem("tasks")
-) || [];
+});
 
-setTasks(savedTasks);
+const [taskRecords,setTaskRecords] = useState([]);
 
-},[]);
 
 const createTask=()=>{
 
-if(!title || !description) return;
+if(
+!taskInfo.title ||
+!taskInfo.description
+){
+
+alert("Fill all fields");
+
+return;
+
+}
 
 const newTask={
 
 id:Date.now(),
-title,
-description,
-deadline,
+
+title:taskInfo.title,
+
+description:taskInfo.description,
+
+deadline:taskInfo.deadline,
+
 status:"Pending"
 
 };
 
-const updatedTasks=[
+setTaskRecords([
 
-...tasks,
+...taskRecords,
 newTask
 
-];
+]);
 
-setTasks(updatedTasks);
+setTaskInfo({
 
-localStorage.setItem(
-"tasks",
-JSON.stringify(updatedTasks)
-);
+title:"",
+description:"",
+deadline:""
 
-setTitle("");
-setDescription("");
-setDeadline("");
-
-alert("Task Added");
+});
 
 };
 
-const updateStatus=(id)=>{
+
+const updateTaskStatus=(taskId)=>{
 
 const updatedTasks=
-tasks.map((task)=>
 
-task.id===id
-? {...task,status:"Completed"}
-: task
+taskRecords.map((task)=>{
 
-);
+if(task.id===taskId){
 
-setTasks(updatedTasks);
+return{
 
-localStorage.setItem(
-"tasks",
-JSON.stringify(updatedTasks)
-);
+...task,
+
+status:
+task.status==="Pending"
+? "Completed"
+: "Pending"
 
 };
+
+}
+
+return task;
+
+});
+
+setTaskRecords(updatedTasks);
+
+};
+
+
+const removeTask=(taskId)=>{
+
+const remainingTasks=
+
+taskRecords.filter(
+
+(task)=>task.id!==taskId
+
+);
+
+setTaskRecords(remainingTasks);
+
+};
+
+
 
 return(
 
@@ -83,65 +113,109 @@ return(
 <input
 type="text"
 placeholder="Task Title"
-value={title}
-onChange={(e)=>setTitle(e.target.value)}
+value={taskInfo.title}
+onChange={(e)=>
+setTaskInfo({
+
+...taskInfo,
+title:e.target.value
+
+})
+}
 />
 
 <br/><br/>
 
 <input
 type="text"
-placeholder="Description"
-value={description}
-onChange={(e)=>setDescription(e.target.value)}
+placeholder="Task Description"
+value={taskInfo.description}
+onChange={(e)=>
+setTaskInfo({
+
+...taskInfo,
+description:e.target.value
+
+})
+}
 />
 
 <br/><br/>
 
 <input
 type="date"
-value={deadline}
-onChange={(e)=>setDeadline(e.target.value)}
+value={taskInfo.deadline}
+onChange={(e)=>
+setTaskInfo({
+
+...taskInfo,
+deadline:e.target.value
+
+})
+}
 />
 
 <br/><br/>
 
-<button onClick={createTask}>
+<button
+onClick={createTask}
+>
+
 Add Task
+
 </button>
 
 <hr/>
 
-<h2>Task List</h2>
+<h2>Task Records</h2>
 
 {
 
-tasks.map((task)=>(
+taskRecords.map((task)=>(
 
 <div
 key={task.id}
 style={{
-border:"1px solid lightgray",
-padding:"10px",
-margin:"10px"
+
+border:"1px solid gray",
+padding:"15px",
+marginBottom:"10px"
+
 }}
 >
 
-<p><b>Title:</b> {task.title}</p>
+<h3>{task.title}</h3>
 
-<p><b>Description:</b> {task.description}</p>
+<p>{task.description}</p>
 
-<p><b>Status:</b> {task.status}</p>
+<p>
+Deadline: {task.deadline}
+</p>
 
-<p><b>Deadline:</b> {task.deadline}</p>
+<p>
+Status: {task.status}
+</p>
 
 <button
 onClick={()=>
-updateStatus(task.id)
+updateTaskStatus(task.id)
 }
 >
 
-Mark Complete
+Update Status
+
+</button>
+
+<button
+style={{
+marginLeft:"10px"
+}}
+onClick={()=>
+removeTask(task.id)
+}
+>
+
+Delete
 
 </button>
 
