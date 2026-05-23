@@ -2,78 +2,199 @@ import { useState } from "react";
 
 function Employee() {
 
-const [keyword, setKeyword] = useState("");
+const [searchText,setSearchText] = useState("");
 
-const employeeRecords = [
+const [employeeList,setEmployeeList] = useState([
 
 {
 id:1,
-fullName:"Gurpreet Singh",
+name:"Gurpreet Singh",
 email:"gurpreet@gmail.com",
-designation:"Employee"
+role:"Employee"
 },
 
 {
 id:2,
-fullName:"Rahul Kumar",
+name:"Rahul Kumar",
 email:"rahul@gmail.com",
-designation:"Manager"
+role:"Manager"
 },
 
 {
 id:3,
-fullName:"Priya Sharma",
+name:"Priya Sharma",
 email:"priya@gmail.com",
-designation:"HR"
+role:"HR"
 }
 
-];
+]);
 
-const visibleEmployees = employeeRecords.filter((item)=>
+const [editingId,setEditingId] = useState(null);
 
-item.fullName
+const [updatedName,setUpdatedName] = useState("");
+
+
+
+const removeEmployee=(id)=>{
+
+const filteredData=
+
+employeeList.filter(
+(item)=>item.id!==id
+);
+
+setEmployeeList(filteredData);
+
+};
+
+
+
+const startEdit=(employee)=>{
+
+setEditingId(employee.id);
+
+setUpdatedName(employee.name);
+
+};
+
+
+
+const saveEmployee=()=>{
+
+const updatedList=
+
+employeeList.map((employee)=>{
+
+if(employee.id===editingId){
+
+return{
+
+...employee,
+name:updatedName
+
+};
+
+}
+
+return employee;
+
+});
+
+setEmployeeList(updatedList);
+
+setEditingId(null);
+
+};
+
+
+
+const filteredEmployees=
+
+employeeList.filter((employee)=>
+
+employee.name
 .toLowerCase()
-.includes(keyword.toLowerCase())
+.includes(
+searchText.toLowerCase()
+)
 
 );
 
+
+
 return(
 
-<div style={{padding:"25px"}}>
+<div style={{padding:"20px"}}>
 
-<h1>Employee Directory</h1>
+<h1>Employee Management</h1>
 
 <input
 type="text"
-placeholder="Search employee by name..."
-value={keyword}
-onChange={(e)=>setKeyword(e.target.value)}
+placeholder="Search Employee..."
+value={searchText}
+onChange={(e)=>
+setSearchText(e.target.value)
+}
 style={{
 padding:"10px",
-width:"320px",
-marginBottom:"20px"
+width:"300px"
 }}
 />
 
+<br/><br/>
+
 {
 
-visibleEmployees.map((employee)=>(
+filteredEmployees.map((employee)=>(
 
 <div
 key={employee.id}
 style={{
-border:"1px solid #d1d5db",
+border:"1px solid gray",
 padding:"15px",
-marginBottom:"10px",
-borderRadius:"8px"
+marginBottom:"10px"
 }}
 >
 
-<h3>{employee.fullName}</h3>
+{
 
-<p>Email: {employee.email}</p>
+editingId===employee.id ?
 
-<p>Role: {employee.designation}</p>
+<div>
+
+<input
+value={updatedName}
+onChange={(e)=>
+setUpdatedName(
+e.target.value
+)
+}
+/>
+
+<button
+onClick={saveEmployee}
+>
+Save
+</button>
+
+</div>
+
+:
+
+<div>
+
+<h3>{employee.name}</h3>
+
+<p>{employee.email}</p>
+
+<p>{employee.role}</p>
+
+<button
+onClick={()=>
+startEdit(employee)
+}
+>
+
+Edit
+
+</button>
+
+<button
+style={{
+marginLeft:"10px"
+}}
+onClick={()=>
+removeEmployee(employee.id)
+}
+>
+
+Delete
+
+</button>
+
+</div>
+
+}
 
 </div>
 
