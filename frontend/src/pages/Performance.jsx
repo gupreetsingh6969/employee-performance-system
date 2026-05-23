@@ -2,64 +2,30 @@ import { useState } from "react";
 
 function Performance(){
 
-const [reviewData,setReviewData] = useState({
+const [performanceList,setPerformanceList]=useState([
 
-employeeName:"",
-rating:"",
-kpi:"",
-feedback:""
+{
+id:1,
+employee:"John Smith",
+rating:92,
+feedback:"Excellent productivity"
+},
 
-});
+{
+id:2,
+employee:"Sarah Lee",
+rating:85,
+feedback:"Good communication skills"
+},
 
-const [performanceList,setPerformanceList] = useState([]);
-
-
-const savePerformance = ()=>{
-
-if(
-!reviewData.employeeName ||
-!reviewData.rating ||
-!reviewData.kpi
-){
-
-alert("Please fill required fields");
-
-return;
-
+{
+id:3,
+employee:"David Wilson",
+rating:76,
+feedback:"Needs training improvement"
 }
 
-const newEntry={
-
-id:Date.now(),
-
-employeeName:reviewData.employeeName,
-
-rating:reviewData.rating,
-
-kpi:reviewData.kpi,
-
-feedback:reviewData.feedback
-
-};
-
-setPerformanceList([
-
-...performanceList,
-newEntry
-
 ]);
-
-setReviewData({
-
-employeeName:"",
-rating:"",
-kpi:"",
-feedback:""
-
-});
-
-};
-
 
 
 return(
@@ -67,85 +33,8 @@ return(
 <div style={{padding:"20px"}}>
 
 <h1>
-Performance Monitoring
+Employee Performance
 </h1>
-
-<input
-type="text"
-placeholder="Employee Name"
-value={reviewData.employeeName}
-onChange={(e)=>
-setReviewData({
-
-...reviewData,
-employeeName:e.target.value
-
-})
-}
-/>
-
-<br/><br/>
-
-<input
-type="number"
-placeholder="Rating (1-10)"
-value={reviewData.rating}
-onChange={(e)=>
-setReviewData({
-
-...reviewData,
-rating:e.target.value
-
-})
-}
-/>
-
-<br/><br/>
-
-<input
-type="text"
-placeholder="KPI Score"
-value={reviewData.kpi}
-onChange={(e)=>
-setReviewData({
-
-...reviewData,
-kpi:e.target.value
-
-})
-}
-/>
-
-<br/><br/>
-
-<textarea
-placeholder="Feedback"
-value={reviewData.feedback}
-onChange={(e)=>
-setReviewData({
-
-...reviewData,
-feedback:e.target.value
-
-})
-}
-/>
-
-<br/><br/>
-
-<button
-onClick={savePerformance}
->
-
-Save Review
-
-</button>
-
-<hr/>
-
-<h2>
-Performance Records
-</h2>
 
 {
 
@@ -154,19 +43,24 @@ performanceList.map((record)=>(
 <div
 key={record.id}
 style={{
-border:"1px solid #d1d5db",
+border:"1px solid gray",
 padding:"15px",
-marginBottom:"10px"
+marginBottom:"10px",
+borderRadius:"10px"
 }}
 >
 
-<h3>{record.employeeName}</h3>
+<h3>
+{record.employee}
+</h3>
 
-<p>Rating: {record.rating}</p>
+<p>
+Rating: {record.rating}%
+</p>
 
-<p>KPI: {record.kpi}</p>
-
-<p>Feedback: {record.feedback}</p>
+<p>
+Feedback: {record.feedback}
+</p>
 
 </div>
 

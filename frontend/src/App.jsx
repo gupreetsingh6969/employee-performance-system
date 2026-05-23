@@ -1,56 +1,90 @@
-const currentRole = localStorage.getItem("userRole");
+const userAccessLevel = localStorage.getItem("userRole");
 
 <div
 style={{
 display:"flex",
 flexDirection:"column",
-gap:"15px"
+rowGap:"15px"
 }}
 >
 
-<Link style={{color:"white"}} to="/dashboard">
+<Link
+style={{color:"white"}}
+to="/dashboard"
+>
 Dashboard
 </Link>
 
-{
-currentRole==="ADMIN" && (
 
-<>
+{
+userAccessLevel==="ADMIN"
+?
+
+<div
+style={{
+display:"flex",
+flexDirection:"column",
+rowGap:"15px"
+}}
+>
 
 <Link
 style={{color:"white"}}
 to="/employees"
 >
-Employees
+Employee Management
 </Link>
 
 <Link
 style={{color:"white"}}
 to="/tasks"
 >
-Tasks
+Task Management
 </Link>
 
-</>
+</div>
 
-)
-
+:null
 }
 
-<Link style={{color:"white"}} to="/performance">
+
+<Link
+style={{color:"white"}}
+to="/performance"
+>
 Performance
 </Link>
 
-<Link style={{color:"white"}} to="/notifications">
+
+<Link
+style={{color:"white"}}
+to="/notifications"
+>
 Notifications
 </Link>
 
-<Link style={{color:"white"}} to="/ai">
+
+<Link
+style={{color:"white"}}
+to="/ai"
+>
 AI Recommendations
 </Link>
 
-<Link style={{color:"white"}} to="/achievements">
+
+<Link
+style={{color:"white"}}
+to="/achievements"
+>
 Achievements
+</Link>
+
+
+<Link
+style={{color:"white"}}
+to="/testing"
+>
+Testing Metrics
 </Link>
 
 </div>

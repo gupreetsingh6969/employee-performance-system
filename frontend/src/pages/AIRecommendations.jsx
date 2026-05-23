@@ -2,27 +2,31 @@ import { useState } from "react";
 
 function AIRecommendations(){
 
-const [recommendations] = useState([
+const [recommendationData] = useState([
 
 {
 id:1,
-title:"Training Suggestion",
-message:"Employees with lower KPI scores may benefit from technical workshops."
+employee:"John Smith",
+prediction:"Top Performer",
+suggestion:"Leadership training program"
 },
 
 {
 id:2,
-title:"Performance Insight",
-message:"High-performing employees can be considered for leadership roles."
+employee:"Sarah Lee",
+prediction:"Consistent Performance",
+suggestion:"Advanced skill workshop"
 },
 
 {
 id:3,
-title:"Productivity Advice",
-message:"Task completion trends indicate a need for improved time management."
+employee:"David Wilson",
+prediction:"Needs Improvement",
+suggestion:"Technical training session"
 }
 
 ]);
+
 
 return(
 
@@ -33,28 +37,38 @@ AI Recommendations
 </h1>
 
 <p>
-System-generated insights for employee improvement
+Performance analysis and training suggestions
 </p>
 
-<hr/>
+<br/>
 
 {
 
-recommendations.map((item)=>(
+recommendationData.map((record)=>(
 
 <div
-key={item.id}
+key={record.id}
 style={{
-border:"1px solid #d1d5db",
+border:"1px solid gray",
 padding:"15px",
-marginBottom:"12px",
-borderRadius:"8px"
+marginBottom:"10px",
+borderRadius:"10px"
 }}
 >
 
-<h3>{item.title}</h3>
+<h3>
+{record.employee}
+</h3>
 
-<p>{item.message}</p>
+<p>
+Prediction:
+{record.prediction}
+</p>
+
+<p>
+Suggested Action:
+{record.suggestion}
+</p>
 
 </div>
 

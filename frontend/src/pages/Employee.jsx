@@ -1,91 +1,48 @@
 import { useState } from "react";
 
-function Employee() {
+function Employee(){
 
-const [searchText,setSearchText] = useState("");
+const [searchText,setSearchText]=useState("");
 
-const [employeeList,setEmployeeList] = useState([
+const [employeeList,setEmployeeList]=useState([
 
 {
 id:1,
-name:"Gurpreet Singh",
-email:"gurpreet@gmail.com",
-role:"Employee"
+name:"John Smith",
+email:"john@gmail.com",
+department:"HR"
 },
 
 {
 id:2,
-name:"Rahul Kumar",
-email:"rahul@gmail.com",
-role:"Manager"
+name:"Sarah Lee",
+email:"sarah@gmail.com",
+department:"Manager"
 },
 
 {
 id:3,
-name:"Priya Sharma",
-email:"priya@gmail.com",
-role:"HR"
+name:"David Wilson",
+email:"david@gmail.com",
+department:"Employee"
 }
 
 ]);
 
-const [editingId,setEditingId] = useState(null);
-
-const [updatedName,setUpdatedName] = useState("");
-
-
 
 const removeEmployee=(id)=>{
 
-const filteredData=
+const updatedEmployees=
 
 employeeList.filter(
-(item)=>item.id!==id
+(employee)=>employee.id!==id
 );
 
-setEmployeeList(filteredData);
+setEmployeeList(
+updatedEmployees
+);
 
 };
-
-
-
-const startEdit=(employee)=>{
-
-setEditingId(employee.id);
-
-setUpdatedName(employee.name);
-
-};
-
-
-
-const saveEmployee=()=>{
-
-const updatedList=
-
-employeeList.map((employee)=>{
-
-if(employee.id===editingId){
-
-return{
-
-...employee,
-name:updatedName
-
-};
-
-}
-
-return employee;
-
-});
-
-setEmployeeList(updatedList);
-
-setEditingId(null);
-
-};
-
 
 
 const filteredEmployees=
@@ -101,7 +58,6 @@ searchText.toLowerCase()
 );
 
 
-
 return(
 
 <div style={{padding:"20px"}}>
@@ -109,80 +65,55 @@ return(
 <h1>Employee Management</h1>
 
 <input
+
 type="text"
-placeholder="Search Employee..."
+
+placeholder="Search employee"
+
 value={searchText}
+
 onChange={(e)=>
-setSearchText(e.target.value)
+setSearchText(
+e.target.value
+)
 }
+
 style={{
 padding:"10px",
-width:"300px"
+width:"250px"
 }}
+
 />
 
 <br/><br/>
+
 
 {
 
 filteredEmployees.map((employee)=>(
 
 <div
+
 key={employee.id}
+
 style={{
+
 border:"1px solid gray",
 padding:"15px",
-marginBottom:"10px"
+marginBottom:"10px",
+borderRadius:"10px"
+
 }}
+
 >
 
-{
+<p>Name: {employee.name}</p>
 
-editingId===employee.id ?
+<p>Email: {employee.email}</p>
 
-<div>
-
-<input
-value={updatedName}
-onChange={(e)=>
-setUpdatedName(
-e.target.value
-)
-}
-/>
+<p>Department: {employee.department}</p>
 
 <button
-onClick={saveEmployee}
->
-Save
-</button>
-
-</div>
-
-:
-
-<div>
-
-<h3>{employee.name}</h3>
-
-<p>{employee.email}</p>
-
-<p>{employee.role}</p>
-
-<button
-onClick={()=>
-startEdit(employee)
-}
->
-
-Edit
-
-</button>
-
-<button
-style={{
-marginLeft:"10px"
-}}
 onClick={()=>
 removeEmployee(employee.id)
 }
@@ -191,10 +122,6 @@ removeEmployee(employee.id)
 Delete
 
 </button>
-
-</div>
-
-}
 
 </div>
 
