@@ -1,90 +1,95 @@
-const userAccessLevel = localStorage.getItem("userRole");
+const currentUserType = localStorage.getItem("userRole");
 
 <div
 style={{
 display:"flex",
 flexDirection:"column",
-rowGap:"15px"
+gap:"14px"
 }}
 >
 
 <Link
-style={{color:"white"}}
 to="/dashboard"
+style={{color:"white"}}
 >
 Dashboard
 </Link>
 
 
-{
-userAccessLevel==="ADMIN"
-?
+{currentUserType === "ADMIN" && (
 
 <div
 style={{
 display:"flex",
 flexDirection:"column",
-rowGap:"15px"
+gap:"14px"
 }}
 >
 
 <Link
-style={{color:"white"}}
 to="/employees"
+style={{color:"white"}}
 >
-Employee Management
+Employee Records
 </Link>
 
 <Link
-style={{color:"white"}}
 to="/tasks"
+style={{color:"white"}}
 >
-Task Management
+Task Center
 </Link>
 
 </div>
 
-:null
-}
+)}
 
 
 <Link
-style={{color:"white"}}
 to="/performance"
+style={{color:"white"}}
 >
-Performance
+Performance Analysis
 </Link>
 
 
 <Link
-style={{color:"white"}}
 to="/notifications"
+style={{color:"white"}}
 >
-Notifications
+Alerts & Notifications
 </Link>
 
 
 <Link
+to="/processing"
 style={{color:"white"}}
+>
+Data Processing
+</Link>
+
+
+<Link
 to="/ai"
+style={{color:"white"}}
 >
-AI Recommendations
+AI Insights
 </Link>
 
 
 <Link
-style={{color:"white"}}
 to="/achievements"
+style={{color:"white"}}
 >
 Achievements
 </Link>
 
 
 <Link
-style={{color:"white"}}
 to="/testing"
+style={{color:"white"}}
 >
-Testing Metrics
+Testing Reports
 </Link>
 
 </div>

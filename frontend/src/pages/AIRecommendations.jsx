@@ -2,27 +2,30 @@ import { useState } from "react";
 
 function AIRecommendations(){
 
-const [recommendationData] = useState([
+const [predictionResults] = useState([
 
 {
 id:1,
 employee:"John Smith",
+score:92,
 prediction:"Top Performer",
-suggestion:"Leadership training program"
+training:"Leadership Development"
 },
 
 {
 id:2,
 employee:"Sarah Lee",
-prediction:"Consistent Performance",
-suggestion:"Advanced skill workshop"
+score:84,
+prediction:"Consistent Performer",
+training:"Advanced Communication"
 },
 
 {
 id:3,
 employee:"David Wilson",
-prediction:"Needs Improvement",
-suggestion:"Technical training session"
+score:70,
+prediction:"Training Required",
+training:"Technical Skill Enhancement"
 }
 
 ]);
@@ -33,18 +36,18 @@ return(
 <div style={{padding:"20px"}}>
 
 <h1>
-AI Recommendations
+AI Prediction Results
 </h1>
 
 <p>
-Performance analysis and training suggestions
+Performance analysis and training recommendations
 </p>
 
 <br/>
 
 {
 
-recommendationData.map((record)=>(
+predictionResults.map((record)=>(
 
 <div
 key={record.id}
@@ -61,13 +64,18 @@ borderRadius:"10px"
 </h3>
 
 <p>
+Performance Score:
+{record.score}
+</p>
+
+<p>
 Prediction:
 {record.prediction}
 </p>
 
 <p>
-Suggested Action:
-{record.suggestion}
+Recommended Training:
+{record.training}
 </p>
 
 </div>

@@ -1,54 +1,86 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Notifications(){
 
-const [notificationList] = useState([
+const [notificationData,setNotificationData] = useState([]);
+
+const loadNotifications = ()=>{
+
+setNotificationData([
 
 {
 id:1,
-title:"Performance Review",
-message:"Employee performance review scheduled tomorrow"
+title:"Performance Review Reminder",
+message:"Quarterly evaluation deadline is approaching",
+status:"Pending"
 },
 
 {
 id:2,
-title:"Task Reminder",
-message:"Pending task deadline approaching"
+title:"Feedback Update",
+message:"New feedback added for employee records",
+status:"Completed"
 },
 
 {
 id:3,
-title:"Achievement Update",
-message:"New employee achievement has been recorded"
+title:"Training Recommendation",
+message:"AI recommends technical skill training",
+status:"New"
 }
 
 ]);
+
+};
+
+
+useEffect(()=>{
+
+loadNotifications();
+
+},[]);
+
 
 return(
 
 <div style={{padding:"20px"}}>
 
 <h1>
-Notification Center
+Notifications Center
 </h1>
+
+<br/>
 
 {
 
-notificationList.map((item)=>(
+notificationData.map((item)=>(
 
 <div
 key={item.id}
 style={{
-border:"1px solid #d1d5db",
+border:"1px solid gray",
 padding:"15px",
-marginBottom:"15px",
+marginBottom:"10px",
 borderRadius:"10px"
 }}
 >
 
-<h3>{item.title}</h3>
+<h3>
+{item.title}
+</h3>
 
-<p>{item.message}</p>
+<p>
+{item.message}
+</p>
+
+<p>
+
+Status:
+<b>
+ {item.status}
+</b>
+
+</p>
 
 </div>
 

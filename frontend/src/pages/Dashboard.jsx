@@ -13,6 +13,8 @@ performanceScore:0
 
 const [activityList,setActivityList] = useState([]);
 
+const [performanceData,setPerformanceData] = useState([]);
+
 const loadDashboardData = ()=>{
 
 setStatistics({
@@ -26,9 +28,44 @@ performanceScore:91
 
 setActivityList([
 
-"Task assigned to employee team",
-"Performance review updated",
-"Achievement record added"
+{
+message:"Task assigned to employee team",
+time:"10:30 AM"
+},
+
+{
+message:"Performance review updated",
+time:"11:15 AM"
+},
+
+{
+message:"Achievement record added",
+time:"12:00 PM"
+}
+
+]);
+
+setPerformanceData([
+
+{
+employee:"John",
+score:92
+},
+
+{
+employee:"Sarah",
+score:84
+},
+
+{
+employee:"David",
+score:70
+},
+
+{
+employee:"Michael",
+score:88
+}
 
 ]);
 
@@ -61,7 +98,8 @@ Welcome to the employee monitoring system
 onClick={loadDashboardData}
 style={{
 padding:"10px",
-cursor:"pointer"
+cursor:"pointer",
+borderRadius:"6px"
 }}
 >
 Refresh Dashboard
@@ -168,6 +206,70 @@ borderRadius:"10px"
 
 <hr/>
 
+
+<h2>
+Performance Analytics
+</h2>
+
+<div
+style={{
+
+display:"flex",
+alignItems:"flex-end",
+gap:"20px",
+marginTop:"20px"
+
+}}
+>
+
+{
+
+performanceData.map((item,index)=>(
+
+<div
+key={index}
+style={{
+
+display:"flex",
+flexDirection:"column",
+alignItems:"center"
+
+}}
+>
+
+<div
+style={{
+
+height:`${item.score}px`,
+width:"50px",
+background:"#2563eb",
+borderRadius:"5px"
+
+}}
+>
+
+</div>
+
+<p>
+{item.score}%
+</p>
+
+<p>
+{item.employee}
+</p>
+
+</div>
+
+))
+
+}
+
+</div>
+
+
+<hr/>
+
+
 <h2>
 Recent Activities
 </h2>
@@ -185,9 +287,22 @@ borderRadius:"10px"
 
 activityList.map((item,index)=>(
 
-<p key={index}>
-• {item}
+<div
+key={index}
+style={{
+marginBottom:"10px"
+}}
+>
+
+<p>
+• {item.message}
 </p>
+
+<small>
+{item.time}
+</small>
+
+</div>
 
 ))
 
