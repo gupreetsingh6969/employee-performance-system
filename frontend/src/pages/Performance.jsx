@@ -1,223 +1,172 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function Performance() {
+function Performance(){
 
-const [reviews,setReviews]=useState([]);
-const [employees,setEmployees]=useState([]);
+const [reviewData,setReviewData] = useState({
 
-const [employeeId,setEmployeeId]=useState("");
-const [rating,setRating]=useState("");
-const [kpi,setKpi]=useState("");
-const [review,setReview]=useState("");
+employeeName:"",
+rating:"",
+kpi:"",
+feedback:""
 
-useEffect(()=>{
+});
 
-const storedEmployees =
-JSON.parse(
-localStorage.getItem("employees")
-) || [];
+const [performanceList,setPerformanceList] = useState([]);
 
-const storedReviews =
-JSON.parse(
-localStorage.getItem("reviews")
-) || [];
 
-setEmployees(storedEmployees);
-setReviews(storedReviews);
-
-},[]);
-
-const handleAddReview=()=>{
+const savePerformance = ()=>{
 
 if(
-!employeeId ||
-!rating ||
-!kpi ||
-!review
+!reviewData.employeeName ||
+!reviewData.rating ||
+!reviewData.kpi
 ){
+
+alert("Please fill required fields");
+
 return;
+
 }
 
-const selectedEmployee =
-employees.find(
-(emp)=>
-emp.id===Number(employeeId)
-);
-
-const newReview={
+const newEntry={
 
 id:Date.now(),
 
-employeeName:selectedEmployee.name,
+employeeName:reviewData.employeeName,
 
-rating,
+rating:reviewData.rating,
 
-kpi,
+kpi:reviewData.kpi,
 
-review,
-
-reviewDate:new Date()
+feedback:reviewData.feedback
 
 };
 
-const updatedReviews=[
+setPerformanceList([
 
-...reviews,
-newReview
+...performanceList,
+newEntry
 
-];
+]);
 
-setReviews(updatedReviews);
+setReviewData({
 
-localStorage.setItem(
-"reviews",
-JSON.stringify(updatedReviews)
-);
+employeeName:"",
+rating:"",
+kpi:"",
+feedback:""
 
-setEmployeeId("");
-setRating("");
-setKpi("");
-setReview("");
+});
 
 };
 
-const handleDelete=(id)=>{
 
-const updatedReviews=
-reviews.filter(
-(item)=>
-item.id!==id
-);
-
-setReviews(updatedReviews);
-
-localStorage.setItem(
-"reviews",
-JSON.stringify(updatedReviews)
-);
-
-};
 
 return(
 
 <div style={{padding:"20px"}}>
 
-<h1>Performance Reviews</h1>
+<h1>
+Performance Monitoring
+</h1>
 
-<div style={{marginBottom:"20px"}}>
-
-<select
-value={employeeId}
+<input
+type="text"
+placeholder="Employee Name"
+value={reviewData.employeeName}
 onChange={(e)=>
-setEmployeeId(e.target.value)
+setReviewData({
+
+...reviewData,
+employeeName:e.target.value
+
+})
 }
->
+/>
 
-<option value="">
-Select Employee
-</option>
-
-{
-
-employees.map((emp)=>(
-
-<option
-key={emp.id}
-value={emp.id}
->
-
-{emp.name}
-
-</option>
-
-))
-
-}
-
-</select>
+<br/><br/>
 
 <input
 type="number"
-placeholder="Rating"
-value={rating}
+placeholder="Rating (1-10)"
+value={reviewData.rating}
 onChange={(e)=>
-setRating(e.target.value)
+setReviewData({
+
+...reviewData,
+rating:e.target.value
+
+})
 }
 />
+
+<br/><br/>
 
 <input
-placeholder="KPI"
-value={kpi}
+type="text"
+placeholder="KPI Score"
+value={reviewData.kpi}
 onChange={(e)=>
-setKpi(e.target.value)
+setReviewData({
+
+...reviewData,
+kpi:e.target.value
+
+})
 }
 />
 
-<input
-placeholder="Review"
-value={review}
+<br/><br/>
+
+<textarea
+placeholder="Feedback"
+value={reviewData.feedback}
 onChange={(e)=>
-setReview(e.target.value)
+setReviewData({
+
+...reviewData,
+feedback:e.target.value
+
+})
 }
 />
 
-<button onClick={handleAddReview}>
-Add Review
+<br/><br/>
+
+<button
+onClick={savePerformance}
+>
+
+Save Review
+
 </button>
 
-</div>
+<hr/>
+
+<h2>
+Performance Records
+</h2>
 
 {
 
-reviews.map((item)=>(
+performanceList.map((record)=>(
 
 <div
-key={item.id}
+key={record.id}
 style={{
-border:"1px solid lightgray",
-padding:"10px",
-margin:"10px"
+border:"1px solid #d1d5db",
+padding:"15px",
+marginBottom:"10px"
 }}
 >
 
-<p>
-<b>Employee:</b>
-{item.employeeName}
-</p>
+<h3>{record.employeeName}</h3>
 
-<p>
-<b>Rating:</b>
-{item.rating}
-</p>
+<p>Rating: {record.rating}</p>
 
-<p>
-<b>KPI:</b>
-{item.kpi}
-</p>
+<p>KPI: {record.kpi}</p>
 
-<p>
-<b>Review:</b>
-{item.review}
-</p>
-
-<p>
-<b>Date:</b>
-
-{new Date(
-item.reviewDate
-).toLocaleDateString()}
-
-</p>
-
-<button
-onClick={()=>
-handleDelete(item.id)
-}
->
-
-Delete
-
-</button>
+<p>Feedback: {record.feedback}</p>
 
 </div>
 
