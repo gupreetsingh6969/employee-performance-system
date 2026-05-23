@@ -1,114 +1,79 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function Employee() {
 
-const [employees,setEmployees]=useState([]);
-const [name,setName]=useState("");
-const [position,setPosition]=useState("");
+const [keyword, setKeyword] = useState("");
 
-useEffect(()=>{
+const employeeRecords = [
 
-const savedEmployees=
-JSON.parse(
-localStorage.getItem("employees")
-) || [];
+{
+id:1,
+fullName:"Gurpreet Singh",
+email:"gurpreet@gmail.com",
+designation:"Employee"
+},
 
-setEmployees(savedEmployees);
+{
+id:2,
+fullName:"Rahul Kumar",
+email:"rahul@gmail.com",
+designation:"Manager"
+},
 
-},[]);
+{
+id:3,
+fullName:"Priya Sharma",
+email:"priya@gmail.com",
+designation:"HR"
+}
 
-const addEmployee=()=>{
-
-if(!name || !position) return;
-
-const newEmployee={
-
-id:Date.now(),
-name,
-position
-
-};
-
-const updatedEmployees=[
-...employees,
-newEmployee
 ];
 
-setEmployees(updatedEmployees);
+const visibleEmployees = employeeRecords.filter((item)=>
 
-localStorage.setItem(
-"employees",
-JSON.stringify(updatedEmployees)
+item.fullName
+.toLowerCase()
+.includes(keyword.toLowerCase())
+
 );
-
-setName("");
-setPosition("");
-
-};
-
-const deleteEmployee=(id)=>{
-
-const updatedEmployees=
-employees.filter(
-(emp)=>emp.id!==id
-);
-
-setEmployees(updatedEmployees);
-
-localStorage.setItem(
-"employees",
-JSON.stringify(updatedEmployees)
-);
-
-};
 
 return(
 
-<div
+<div style={{padding:"25px"}}>
+
+<h1>Employee Directory</h1>
+
+<input
+type="text"
+placeholder="Search employee by name..."
+value={keyword}
+onChange={(e)=>setKeyword(e.target.value)}
 style={{
-padding:"20px",
-textAlign:"center"
+padding:"10px",
+width:"320px",
+marginBottom:"20px"
 }}
->
-
-<h1>Employee Management</h1>
-
-<input
-type="text"
-placeholder="Employee Name"
-value={name}
-onChange={(e)=>setName(e.target.value)}
 />
-
-<input
-type="text"
-placeholder="Position"
-value={position}
-onChange={(e)=>setPosition(e.target.value)}
-/>
-
-<button onClick={addEmployee}>
-Add Employee
-</button>
-
-<hr/>
 
 {
 
-employees.map((emp)=>(
+visibleEmployees.map((employee)=>(
 
-<div key={emp.id}>
-
-<h3>{emp.name}</h3>
-<p>{emp.position}</p>
-
-<button
-onClick={()=>
-deleteEmployee(emp.id)
-}
+<div
+key={employee.id}
+style={{
+border:"1px solid #d1d5db",
+padding:"15px",
+marginBottom:"10px",
+borderRadius:"8px"
+}}
 >
-Delete
-</button>
+
+<h3>{employee.fullName}</h3>
+
+<p>Email: {employee.email}</p>
+
+<p>Role: {employee.designation}</p>
 
 </div>
 
