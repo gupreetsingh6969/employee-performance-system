@@ -1,53 +1,8 @@
-import { useState } from "react";
-import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
 
-const [name,setName]=useState("");
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
-const [loading,setLoading]=useState(false);
-
-const handleSignup = async ()=>{
-
-try{
-
-setLoading(true);
-
-const response = await api.post(
-"/api/auth/register",
-{
-name:name.trim(),
-email:email.trim(),
-password:password.trim()
-}
-);
-
-console.log("Signup:",response.data);
-
-alert("Signup Successful");
-
-window.location.href="/";
-
-}
-catch(error){
-
-console.log("Signup Error:",error);
-
-alert(
-error?.response?.data?.message ||
-error?.response?.data?.error ||
-"Signup Failed"
-);
-
-}
-finally{
-
-setLoading(false);
-
-}
-
-};
+const navigate = useNavigate();
 
 return(
 
@@ -55,45 +10,29 @@ return(
 style={{
 display:"flex",
 flexDirection:"column",
+justifyContent:"center",
 alignItems:"center",
-marginTop:"100px"
+height:"70vh",
+textAlign:"center"
 }}
 >
 
-<h1>Employee Signup</h1>
+<h1>Signup Disabled</h1>
 
-<input
-type="text"
-placeholder="Name"
-value={name}
-onChange={(e)=>setName(e.target.value)}
-/>
-
-<br/>
-
-<input
-type="email"
-placeholder="Email"
-value={email}
-onChange={(e)=>setEmail(e.target.value)}
-/>
-
-<br/>
-
-<input
-type="password"
-placeholder="Password"
-value={password}
-onChange={(e)=>setPassword(e.target.value)}
-/>
-
-<br/>
+<p>
+Employee accounts are created only by Admin.
+Please contact Admin for your login credentials.
+</p>
 
 <button
-onClick={handleSignup}
-disabled={loading}
+onClick={()=>navigate("/")}
+style={{
+padding:"10px 20px",
+marginTop:"20px",
+cursor:"pointer"
+}}
 >
-{loading ? "Creating..." : "Sign Up"}
+Go To Login
 </button>
 
 </div>

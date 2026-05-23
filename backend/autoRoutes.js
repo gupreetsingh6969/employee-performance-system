@@ -6,9 +6,34 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
+
+// Admin protected registration
 router.post("/register", async (req, res) => {
 
 try {
+
+const authHeader = req.headers.authorization;
+
+if (!authHeader) {
+return res.status(401).json({
+message:"Access denied"
+});
+}
+
+const token = authHeader.split(" ")[1];
+
+const decoded = jwt.verify(
+token,
+process.env.JWT_SECRET
+);
+
+if(decoded.role !== "ADMIN"){
+
+return res.status(403).json({
+message:"Only Admin can create users"
+});
+
+}
 
 const {
 name,
@@ -22,9 +47,11 @@ if(
 !email ||
 !password
 ){
+
 return res.status(400).json({
-message:"All fields are required"
+message:"All fields required"
 });
+
 }
 
 const existingUser =
@@ -54,16 +81,15 @@ await prisma.user.create({
 data:{
 name,
 email,
-password: hashedPassword,
-role: role || "EMPLOYEE"
+password:hashedPassword,
+role:role || "EMPLOYEE"
 }
 
 });
 
 res.status(201).json({
 
-message:
-"User registered successfully",
+message:"Employee created successfully",
 
 user:{
 id:user.id,
@@ -80,15 +106,16 @@ catch(error){
 console.log(error);
 
 res.status(500).json({
-message:"Registration failed",
-error:error.message
+message:error.message
 });
 
 }
 
 });
 
-router.post("/login", async (req,res)=>{
+
+// Login
+router.post("/login", async(req,res)=>{
 
 try{
 
@@ -97,7 +124,7 @@ email,
 password
 }=req.body;
 
-const user=
+const user =
 await prisma.user.findUnique({
 where:{email}
 });
@@ -105,12 +132,12 @@ where:{email}
 if(!user){
 
 return res.status(400).json({
-message:"Invalid email"
+message:"Invalid Email"
 });
 
 }
 
-const match=
+const match =
 await bcrypt.compare(
 password,
 user.password
@@ -119,12 +146,12 @@ user.password
 if(!match){
 
 return res.status(400).json({
-message:"Invalid password"
+message:"Invalid Password"
 });
 
 }
 
-const token=
+const token =
 jwt.sign(
 {
 id:user.id,
@@ -137,8 +164,17 @@ expiresIn:"1d"
 );
 
 res.json({
+
 message:"Login successful",
-token
+
+token,
+
+user:{
+id:user.id,
+name:user.name,
+role:user.role
+}
+
 });
 
 }
