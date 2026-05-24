@@ -1,71 +1,73 @@
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
-function Dashboard(){
+function Dashboard() {
 
-const [stats,setStats]=useState({
+const [stats, setStats] = useState({
 
-totalEmployees:0,
-averageScore:0,
-highestScore:0
+totalEmployees: 0,
+averageScore: 0,
+highestScore: 0
 
 });
 
-const [loading,setLoading]=useState(true);
+const [loading, setLoading] = useState(true);
 
-const [error,setError]=useState("");
+const [error, setError] = useState("");
 
-useEffect(()=>{
+useEffect(() => {
 
 loadDashboard();
 
-},[]);
+}, []);
 
-const loadDashboard=async()=>{
+const loadDashboard = async () => {
 
-try{
+try {
 
 setLoading(true);
 
 setError("");
 
-const response=await axios.get(
+const response = await axios.get(
 "https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
 );
 
-const employees=response.data.data;
+console.log(response.data);
 
-const totalEmployees=
+const employees = response.data || [];
+
+const totalEmployees =
 employees.length;
 
-const totalScore=
+const totalScore =
 employees.reduce(
 
-(sum,employee)=>
+(sum, employee) =>
 
-sum+Number(employee.performanceScore),
+sum + Number(employee.performanceScore || 0),
 
 0
 
 );
 
-const averageScore=
+const averageScore =
 
-employees.length>0
+employees.length > 0
 ?
-(totalScore/employees.length).toFixed(1)
+(totalScore / employees.length).toFixed(1)
 :
 0;
 
-const highestScore=
+const highestScore =
 
-employees.length>0
+employees.length > 0
 ?
 Math.max(
 ...employees.map(
-employee=>employee.performanceScore
+employee => Number(employee.performanceScore || 0)
 )
 )
 :
@@ -79,8 +81,6 @@ highestScore
 
 });
 
-setLoading(false);
-
 }
 catch(error){
 
@@ -89,6 +89,9 @@ console.log(error);
 setError(
 "Failed to load dashboard data"
 );
+
+}
+finally{
 
 setLoading(false);
 
@@ -232,15 +235,25 @@ marginTop:"20px"
 }}
 >
 
-<Link to="/ai"><button>AI Recommendations</button></Link>
+<Link to="/ai">
+<button>AI Recommendations</button>
+</Link>
 
-<Link to="/notifications"><button>Notifications</button></Link>
+<Link to="/notifications">
+<button>Notifications</button>
+</Link>
 
-<Link to="/analytics"><button>Analytics</button></Link>
+<Link to="/analytics">
+<button>Analytics</button>
+</Link>
 
-<Link to="/charts"><button>Charts</button></Link>
+<Link to="/charts">
+<button>Charts</button>
+</Link>
 
-<Link to="/testing"><button>Testing Metrics</button></Link>
+<Link to="/testing">
+<button>Testing Metrics</button>
+</Link>
 
 </div>
 
