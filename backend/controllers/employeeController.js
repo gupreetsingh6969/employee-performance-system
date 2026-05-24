@@ -7,8 +7,7 @@ const prisma = new PrismaClient();
 export const getEmployees = async (req, res) => {
   try {
 
-    const employees =
-      await prisma.Employee.findMany();
+    const employees = await prisma.employee.findMany();
 
     res.status(200).json({
       success: true,
@@ -18,7 +17,7 @@ export const getEmployees = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error);
+    console.log("Get Employees Error:", error);
 
     res.status(500).json({
       success: false,
@@ -31,95 +30,94 @@ export const getEmployees = async (req, res) => {
 
 // Add employee
 export const createEmployee = async (req, res) => {
-
   try {
 
-    const employee =
-      await prisma.Employee.create({
-        data: req.body
-      });
+    const employee = await prisma.employee.create({
+      data: {
+        name: req.body.name,
+        email: req.body.email,
+        department: req.body.department,
+        position: req.body.position,
+        performanceScore: Number(req.body.performanceScore)
+      }
+    });
 
     res.status(201).json({
       success: true,
       data: employee
     });
 
-  } catch(error){
+  } catch (error) {
 
-    console.log(error);
+    console.log("Create Employee Error:", error);
 
     res.status(500).json({
-      success:false,
-      message:error.message
+      success: false,
+      message: error.message
     });
 
   }
-
 };
 
 
 // Update employee
-export const updateEmployee = async (req,res)=>{
+export const updateEmployee = async (req, res) => {
+  try {
 
-  try{
-
-    const employee=
-      await prisma.Employee.update({
-
-        where:{
-          id:Number(req.params.id)
-        },
-
-        data:req.body
-
-      });
-
-    res.status(200).json({
-      success:true,
-      data:employee
+    const employee = await prisma.employee.update({
+      where: {
+        id: Number(req.params.id)
+      },
+      data: {
+        name: req.body.name,
+        email: req.body.email,
+        department: req.body.department,
+        position: req.body.position,
+        performanceScore: Number(req.body.performanceScore)
+      }
     });
 
-  }catch(error){
+    res.status(200).json({
+      success: true,
+      data: employee
+    });
 
-    console.log(error);
+  } catch (error) {
+
+    console.log("Update Employee Error:", error);
 
     res.status(500).json({
-      success:false,
-      message:error.message
+      success: false,
+      message: error.message
     });
 
   }
-
 };
 
 
 // Delete employee
-export const deleteEmployee = async(req,res)=>{
+export const deleteEmployee = async (req, res) => {
+  try {
 
-  try{
-
-    await prisma.Employee.delete({
-
-      where:{
-        id:Number(req.params.id)
+    await prisma.employee.delete({
+      where: {
+        id: Number(req.params.id)
       }
-
     });
 
     res.status(200).json({
-      success:true,
-      message:"Employee deleted"
+      success: true,
+      message: "Employee deleted"
     });
 
-  }catch(error){
+  } catch (error) {
 
-    console.log(error);
+    console.log("Delete Employee Error:", error);
 
     res.status(500).json({
-      success:false,
-      message:error.message
+      success: false,
+      message: error.message
     });
 
   }
-
 };
