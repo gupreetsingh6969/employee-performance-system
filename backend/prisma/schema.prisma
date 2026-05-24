@@ -1,53 +1,164 @@
-generator client {
-  provider = "prisma-client-js"
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+
+// Get all employees
+export const getEmployees = async (req,res)=>{
+
+try{
+
+const employees=await prisma.user.findMany({
+
+where:{
+role:"EMPLOYEE"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+});
+
+res.status(200).json({
+
+success:true,
+count:employees.length,
+data:employees
+
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
 }
 
-enum Role {
-  ADMIN
-  HR
-  MANAGER
-  EMPLOYEE
+};
+
+
+// Add employee
+export const createEmployee=async(req,res)=>{
+
+try{
+
+const employee=await prisma.user.create({
+
+data:{
+
+name:req.body.name,
+email:req.body.email,
+password:"123456",
+role:"EMPLOYEE"
+
 }
 
-model User {
-  id           Int @id @default(autoincrement())
-  name         String
-  email        String @unique
-  password     String
-  role         Role @default(EMPLOYEE)
-  createdAt    DateTime @default(now())
+});
 
-  performances Performance[]
-  tasks        Task[]
+res.status(201).json({
+
+success:true,
+data:employee
+
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
 }
 
-model Performance {
-  id          Int @id @default(autoincrement())
-  employeeId  Int
-  rating      Int
-  kpi         String
-  review      String
-  reviewDate  DateTime @default(now())
+};
 
-  employee User @relation(fields:[employeeId], references:[id])
 
-  createdAt DateTime @default(now())
+// Update employee
+export const updateEmployee=async(req,res)=>{
+
+try{
+
+const employee=await prisma.user.update({
+
+where:{
+id:Number(req.params.id)
+},
+
+data:{
+
+name:req.body.name,
+email:req.body.email
+
 }
 
-model Task {
-  id          Int @id @default(autoincrement())
-  title       String
-  description String
-  status      String @default("Pending")
-  deadline    DateTime
+});
 
-  employeeId Int
-  employee User @relation(fields:[employeeId], references:[id])
+res.status(200).json({
 
-  createdAt DateTime @default(now())
+success:true,
+data:employee
+
+});
+
 }
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
+};
+
+
+// Delete employee
+export const deleteEmployee=async(req,res)=>{
+
+try{
+
+await prisma.user.delete({
+
+where:{
+id:Number(req.params.id)
+}
+
+});
+
+res.status(200).json({
+
+success:true,
+message:"Employee deleted"
+
+});
+
+}
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
+};
