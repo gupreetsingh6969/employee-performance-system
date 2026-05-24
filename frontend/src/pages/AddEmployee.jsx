@@ -1,30 +1,26 @@
-import {useState,useEffect} from "react";
-import {useSearchParams} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-function AddEmployee(){
+function AddEmployee() {
 
-const [searchParams]=useSearchParams();
+const [searchParams] = useSearchParams();
 
-const employeeId=searchParams.get("id");
+const employeeId = searchParams.get("id");
 
-const [employee,setEmployee]=useState({
-
+const [employee, setEmployee] = useState({
 name:"",
 email:"",
 department:"",
 position:"",
 performanceScore:""
-
 });
 
 const handleChange=(e)=>{
 
 setEmployee({
-
 ...employee,
 [e.target.name]:e.target.value
-
 });
 
 };
@@ -32,9 +28,7 @@ setEmployee({
 useEffect(()=>{
 
 if(employeeId){
-
 loadEmployee();
-
 }
 
 },[]);
@@ -44,28 +38,21 @@ const loadEmployee=async()=>{
 try{
 
 const response=await axios.get(
-"http://localhost:5000/api/employees"
+"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
 );
 
-const selectedEmployee=
-
+const selectedEmployee =
 response.data.data.find(
-
 (emp)=>emp._id===employeeId
-
 );
 
 if(selectedEmployee){
-
 setEmployee(selectedEmployee);
-
 }
 
 }
 catch(error){
-
 console.log(error);
-
 }
 
 };
@@ -77,10 +64,8 @@ try{
 if(employeeId){
 
 await axios.put(
-
-`http://localhost:5000/api/employees/${employeeId}`,
+`https://employee-performance-system-production-2fc6.up.railway.app/api/employees/${employeeId}`,
 employee
-
 );
 
 alert("Employee Updated");
@@ -89,10 +74,8 @@ alert("Employee Updated");
 else{
 
 await axios.post(
-
-"http://localhost:5000/api/employees",
+"https://employee-performance-system-production-2fc6.up.railway.app/api/employees",
 employee
-
 );
 
 alert("Employee Added");
@@ -117,9 +100,7 @@ return(
 <div style={{padding:"30px"}}>
 
 <h2>
-
 {employeeId ? "Edit Employee" : "Add Employee"}
-
 </h2>
 
 <input
@@ -168,9 +149,7 @@ onChange={handleChange}
 <br/><br/>
 
 <button onClick={handleSubmit}>
-
 {employeeId ? "Update Employee" : "Add Employee"}
-
 </button>
 
 </div>
