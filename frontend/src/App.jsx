@@ -6,12 +6,14 @@ import AIRecommendations from "./pages/AIRecommendations";
 import Notifications from "./pages/Notifications";
 import TestingMetrics from "./pages/TestingMetrics";
 import Analytics from "./pages/Analytics";
+import AddEmployee from "./pages/AddEmployee";
+import EmployeeList from "./pages/EmployeeList";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-function App(){
+function App() {
 
-return(
+return (
 
 <BrowserRouter>
 
@@ -27,6 +29,24 @@ path="/dashboard"
 element={
 <ProtectedRoute>
 <Dashboard/>
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/employees"
+element={
+<ProtectedRoute>
+<EmployeeList/>
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/add-employee"
+element={
+<ProtectedRoute>
+<AddEmployee/>
 </ProtectedRoute>
 }
 />
