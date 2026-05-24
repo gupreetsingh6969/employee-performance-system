@@ -1,0 +1,50 @@
+EMPLOYEE PERFORMANCE SYSTEM - AI WORKFLOW
+
+Step 1:
+Collect employee data
+- Employee details
+- Tasks
+- Performance reviews
+- Feedback scores
+
+Step 2:
+Preprocess data
+- Remove empty values
+- Organize ratings
+- Standardize records
+
+Step 3:
+Analyze performance data
+- Compare ratings
+- Compare completed tasks
+- Review KPI values
+
+Step 4:
+AI prediction
+
+Rating >= 8
+Prediction:
+Top Performer
+
+Rating >=5 and <8
+Prediction:
+Average Performer
+
+Rating <5
+Prediction:
+Needs Training
+
+Step 5:
+Generate recommendations
+
+Top Performer:
+Advanced leadership training
+
+Average Performer:
+Skill enhancement program
+
+Needs Training:
+Performance improvement training
+
+Step 6:
+Display results on AI Dashboard
