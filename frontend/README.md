@@ -1,16 +1,84 @@
-# React + Vite
+# Employee Performance System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+Employee Performance System is a desktop/web application designed to track employee performance metrics, analyze trends, and provide AI-based recommendations for improving productivity and training programs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The system enables managers and HR teams to monitor employee performance, feedback, attendance, achievements, and analytics through an interactive dashboard.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+### Authentication & Access Control
+- Secure Login System
+- Role-based access (HR / Manager)
+- Protected routes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Employee Management
+- Employee records management
+- Task tracking
+- Performance metrics
+- Feedback management
+- Achievement tracking
+
+### AI & Machine Learning
+- Historical data preprocessing
+- Performance prediction model
+- AI recommendations
+- Top performer identification
+- Training need analysis
+
+### Analytics Dashboard
+- Employee analytics
+- Attendance tracking
+- Performance trends
+- Task completion statistics
+
+### Notifications
+- Evaluation deadline reminders
+- Feedback update notifications
+- Training notifications
+
+### Testing & Metrics
+- AI Prediction Accuracy
+- API Success Rate
+- Response Time Monitoring
+- Usability Score
+
+---
+
+## Technologies Used
+
+### Frontend
+- React.js
+- Vite
+- Axios
+- React Router DOM
+
+### Backend
+- Node.js
+- Express.js
+
+### Database
+- MongoDB
+
+### AI / Machine Learning
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Joblib
+
+---
+
+## System Architecture
+
+```text
+Frontend (React + Vite)
+        ↓
+Backend API (Node.js + Express)
+        ↓
+Database (MongoDB)
+        ↓
+AI Module (Python ML Model)

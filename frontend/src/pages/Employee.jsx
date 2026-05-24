@@ -2,126 +2,80 @@ import { useState } from "react";
 
 function Employee(){
 
-const [searchText,setSearchText]=useState("");
-
 const [employeeList,setEmployeeList]=useState([
 
 {
 id:1,
-name:"John Smith",
-email:"john@gmail.com",
-department:"HR"
+name:"John",
+department:"Development",
+rating:"92%"
 },
 
 {
 id:2,
-name:"Sarah Lee",
-email:"sarah@gmail.com",
-department:"Manager"
-},
-
-{
-id:3,
-name:"David Wilson",
-email:"david@gmail.com",
-department:"Employee"
+name:"Sarah",
+department:"HR",
+rating:"88%"
 }
 
 ]);
 
+const addEmployee=()=>{
 
-const removeEmployee=(id)=>{
+const newEmployee={
 
-const updatedEmployees=
-
-employeeList.filter(
-(employee)=>employee.id!==id
-);
-
-setEmployeeList(
-updatedEmployees
-);
+id:Date.now(),
+name:"New Employee",
+department:"Training",
+rating:"80%"
 
 };
 
+setEmployeeList([...employeeList,newEmployee]);
 
-const filteredEmployees=
-
-employeeList.filter((employee)=>
-
-employee.name
-.toLowerCase()
-.includes(
-searchText.toLowerCase()
-)
-
-);
-
+};
 
 return(
 
 <div style={{padding:"20px"}}>
 
-<h1>Employee Management</h1>
+<h1>
+Employee Management
+</h1>
 
-<input
+<br/>
 
-type="text"
-
-placeholder="Search employee"
-
-value={searchText}
-
-onChange={(e)=>
-setSearchText(
-e.target.value
-)
-}
-
+<button
+onClick={addEmployee}
 style={{
 padding:"10px",
-width:"250px"
+cursor:"pointer"
 }}
-
-/>
+>
+Add Employee
+</button>
 
 <br/><br/>
 
-
 {
 
-filteredEmployees.map((employee)=>(
+employeeList.map((employee)=>(
 
 <div
-
 key={employee.id}
-
 style={{
-
-border:"1px solid gray",
+border:"1px solid #d1d5db",
 padding:"15px",
 marginBottom:"10px",
 borderRadius:"10px"
-
 }}
-
 >
 
-<p>Name: {employee.name}</p>
-
-<p>Email: {employee.email}</p>
+<h3>{employee.name}</h3>
 
 <p>Department: {employee.department}</p>
 
-<button
-onClick={()=>
-removeEmployee(employee.id)
-}
->
-
-Delete
-
-</button>
+<p>Performance Rating: {employee.rating}</p>
 
 </div>
 

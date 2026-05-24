@@ -1,72 +1,69 @@
-import { useState } from "react";
-
 function Testing(){
 
-const [testResults] = useState([
+const testReport=[
 
 {
-id:1,
-testType:"Login Authentication",
-result:"Passed",
-accuracy:"100%"
+name:"Authentication Test",
+result:"Passed"
 },
 
 {
-id:2,
-testType:"Task Management",
-result:"Passed",
-accuracy:"96%"
+name:"Dashboard Functionality",
+result:"Passed"
 },
 
 {
-id:3,
-testType:"Performance Tracking",
-result:"Passed",
-accuracy:"94%"
+name:"Task Module Test",
+result:"Passed"
 },
 
 {
-id:4,
-testType:"AI Recommendation",
-result:"Passed",
-accuracy:"91%"
+name:"Employee Module Test",
+result:"Passed"
+},
+
+{
+name:"Notification Test",
+result:"Passed"
+},
+
+{
+name:"AI Prediction Accuracy",
+result:"89%"
 }
 
-]);
-
+];
 
 return(
 
 <div style={{padding:"20px"}}>
 
 <h1>
-System Testing Metrics
+Testing Metrics
 </h1>
+
+<br/>
 
 {
 
-testResults.map((item)=>(
+testReport.map((item,index)=>(
 
 <div
-key={item.id}
+key={index}
 style={{
-border:"1px solid gray",
+border:"1px solid #d1d5db",
 padding:"15px",
-marginBottom:"10px",
+marginBottom:"15px",
 borderRadius:"10px"
 }}
 >
 
 <h3>
-{item.testType}
+{item.name}
 </h3>
 
 <p>
-Status: {item.result}
-</p>
-
-<p>
-Accuracy: {item.accuracy}
+Result: {item.result}
 </p>
 
 </div>

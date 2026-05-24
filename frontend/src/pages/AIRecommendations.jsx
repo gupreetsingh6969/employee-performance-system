@@ -1,92 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-function AIRecommendations(){
+function AIRecommendations() {
 
-const [predictionResults] = useState([
+    const [prediction, setPrediction] = useState("");
 
-{
-id:1,
-employee:"John Smith",
-score:92,
-prediction:"Top Performer",
-training:"Leadership Development"
-},
+    useEffect(() => {
 
-{
-id:2,
-employee:"Sarah Lee",
-score:84,
-prediction:"Consistent Performer",
-training:"Advanced Communication"
-},
+        const fetchPrediction = async () => {
 
-{
-id:3,
-employee:"David Wilson",
-score:70,
-prediction:"Training Required",
-training:"Technical Skill Enhancement"
-}
+            try {
 
-]);
+                const response = await axios.get(
+                    "http://localhost:5000/api/ai/predict"
+                );
 
+                setPrediction(
+                    response.data.prediction
+                );
 
-return(
+            } catch (error) {
+                console.log(error);
+            }
 
-<div style={{padding:"20px"}}>
+        };
 
-<h1>
-AI Prediction Results
-</h1>
+        fetchPrediction();
 
-<p>
-Performance analysis and training recommendations
-</p>
+    }, []);
 
-<br/>
+    return (
 
-{
+        <div style={{padding:"20px"}}>
 
-predictionResults.map((record)=>(
+            <h1>AI Recommendations</h1>
 
-<div
-key={record.id}
-style={{
-border:"1px solid gray",
-padding:"15px",
-marginBottom:"10px",
-borderRadius:"10px"
-}}
->
+            <div
+                style={{
+                    border:"1px solid #ccc",
+                    padding:"20px",
+                    borderRadius:"10px"
+                }}
+            >
+                <pre
+                    style={{
+                        whiteSpace:"pre-wrap",
+                        fontSize:"18px"
+                    }}
+                >
+                    {prediction}
+                </pre>
+            </div>
 
-<h3>
-{record.employee}
-</h3>
+        </div>
 
-<p>
-Performance Score:
-{record.score}
-</p>
-
-<p>
-Prediction:
-{record.prediction}
-</p>
-
-<p>
-Recommended Training:
-{record.training}
-</p>
-
-</div>
-
-))
-
-}
-
-</div>
-
-);
+    );
 
 }
 

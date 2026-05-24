@@ -1,312 +1,248 @@
-import { useState, useEffect } from "react";
+import {useEffect,useState} from "react";
+import axios from "axios";
+import {Link} from "react-router-dom";
+import Sidebar from "../components/Sidebar";
 
-function Dashboard() {
+function Dashboard(){
 
-const [statistics, setStatistics] = useState({
+const [stats,setStats]=useState({
 
-employees:0,
-pendingTasks:0,
-completedTasks:0,
-performanceScore:0
-
-});
-
-const [activityList,setActivityList] = useState([]);
-
-const [performanceData,setPerformanceData] = useState([]);
-
-const loadDashboardData = ()=>{
-
-setStatistics({
-
-employees:25,
-pendingTasks:8,
-completedTasks:17,
-performanceScore:91
+totalEmployees:0,
+averageScore:0,
+highestScore:0
 
 });
 
-setActivityList([
+const [loading,setLoading]=useState(true);
 
-{
-message:"Task assigned to employee team",
-time:"10:30 AM"
-},
-
-{
-message:"Performance review updated",
-time:"11:15 AM"
-},
-
-{
-message:"Achievement record added",
-time:"12:00 PM"
-}
-
-]);
-
-setPerformanceData([
-
-{
-employee:"John",
-score:92
-},
-
-{
-employee:"Sarah",
-score:84
-},
-
-{
-employee:"David",
-score:70
-},
-
-{
-employee:"Michael",
-score:88
-}
-
-]);
-
-};
-
+const [error,setError]=useState("");
 
 useEffect(()=>{
 
-loadDashboardData();
+loadDashboard();
 
 },[]);
 
+const loadDashboard=async()=>{
 
+try{
+
+setLoading(true);
+
+setError("");
+
+const response=await axios.get(
+"http://localhost:5000/api/employees"
+);
+
+const employees=response.data.data;
+
+const totalEmployees=
+employees.length;
+
+const totalScore=
+employees.reduce(
+
+(sum,employee)=>
+
+sum+Number(employee.performanceScore),
+
+0
+
+);
+
+const averageScore=
+
+employees.length>0
+?
+(totalScore/employees.length).toFixed(1)
+:
+0;
+
+const highestScore=
+
+employees.length>0
+?
+Math.max(
+...employees.map(
+employee=>employee.performanceScore
+)
+)
+:
+0;
+
+setStats({
+
+totalEmployees,
+averageScore,
+highestScore
+
+});
+
+setLoading(false);
+
+}
+catch(error){
+
+console.log(error);
+
+setError(
+"Failed to load dashboard data"
+);
+
+setLoading(false);
+
+}
+
+};
+
+if(loading){
 
 return(
 
-<div style={{padding:"20px"}}>
-
-<h1>
-Employee Performance Dashboard
-</h1>
-
-<p>
-Welcome to the employee monitoring system
-</p>
-
-<br/>
-
-<button
-onClick={loadDashboardData}
+<h2
 style={{
-padding:"10px",
-cursor:"pointer",
-borderRadius:"6px"
+padding:"30px"
 }}
 >
-Refresh Dashboard
-</button>
-
-<br/><br/>
-
-
-<div
-style={{
-
-display:"flex",
-gap:"20px",
-flexWrap:"wrap"
-
-}}
->
-
-
-<div
-style={{
-
-border:"1px solid #d1d5db",
-padding:"20px",
-width:"220px",
-borderRadius:"10px"
-
-}}
->
-
-<h3>Total Employees</h3>
-
-<h2>
-{statistics.employees}
+Loading...
 </h2>
 
-</div>
-
-
-
-<div
-style={{
-
-border:"1px solid #d1d5db",
-padding:"20px",
-width:"220px",
-borderRadius:"10px"
-
-}}
->
-
-<h3>Pending Tasks</h3>
-
-<h2>
-{statistics.pendingTasks}
-</h2>
-
-</div>
-
-
-
-<div
-style={{
-
-border:"1px solid #d1d5db",
-padding:"20px",
-width:"220px",
-borderRadius:"10px"
-
-}}
->
-
-<h3>Completed Tasks</h3>
-
-<h2>
-{statistics.completedTasks}
-</h2>
-
-</div>
-
-
-
-<div
-style={{
-
-border:"1px solid #d1d5db",
-padding:"20px",
-width:"220px",
-borderRadius:"10px"
-
-}}
->
-
-<h3>Performance Score</h3>
-
-<h2>
-{statistics.performanceScore}%
-</h2>
-
-</div>
-
-</div>
-
-
-<hr/>
-
-
-<h2>
-Performance Analytics
-</h2>
-
-<div
-style={{
-
-display:"flex",
-alignItems:"flex-end",
-gap:"20px",
-marginTop:"20px"
-
-}}
->
-
-{
-
-performanceData.map((item,index)=>(
-
-<div
-key={index}
-style={{
-
-display:"flex",
-flexDirection:"column",
-alignItems:"center"
-
-}}
->
-
-<div
-style={{
-
-height:`${item.score}px`,
-width:"50px",
-background:"#2563eb",
-borderRadius:"5px"
-
-}}
->
-
-</div>
-
-<p>
-{item.score}%
-</p>
-
-<p>
-{item.employee}
-</p>
-
-</div>
-
-))
+);
 
 }
 
-</div>
+if(error){
 
+return(
 
-<hr/>
-
-
-<h2>
-Recent Activities
+<h2
+style={{
+padding:"30px",
+color:"red"
+}}
+>
+{error}
 </h2>
+
+);
+
+}
+
+return(
 
 <div
 style={{
-border:"1px solid gray",
-padding:"15px",
-marginTop:"10px",
-borderRadius:"10px"
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
 }}
 >
 
-{
-
-activityList.map((item,index)=>(
+<Sidebar/>
 
 <div
-key={index}
 style={{
+padding:"30px",
+width:"100%"
+}}
+>
+
+<h1
+style={{
+fontSize:"32px",
 marginBottom:"10px"
 }}
 >
+Employee Performance System
+</h1>
 
-<p>
-• {item.message}
+<p
+style={{
+color:"#6b7280",
+marginBottom:"30px"
+}}
+>
+Track employee performance, analytics, and AI recommendations
 </p>
 
-<small>
-{item.time}
-</small>
+<div
+style={{
+display:"flex",
+gap:"20px",
+flexWrap:"wrap"
+}}
+>
+
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+width:"250px",
+boxShadow:"0 2px 10px rgba(0,0,0,0.1)"
+}}
+>
+<h3>Total Employees</h3>
+<h2>{stats.totalEmployees}</h2>
+</div>
+
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+width:"250px",
+boxShadow:"0 2px 10px rgba(0,0,0,0.1)"
+}}
+>
+<h3>Average Score</h3>
+<h2>{stats.averageScore}</h2>
+</div>
+
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+width:"250px",
+boxShadow:"0 2px 10px rgba(0,0,0,0.1)"
+}}
+>
+<h3>Highest Score</h3>
+<h2>{stats.highestScore}</h2>
+</div>
 
 </div>
 
-))
+<h2
+style={{
+marginTop:"40px"
+}}
+>
+Quick Navigation
+</h2>
 
-}
+<div
+style={{
+display:"flex",
+gap:"15px",
+flexWrap:"wrap",
+marginTop:"20px"
+}}
+>
+
+<Link to="/ai"><button>AI Recommendations</button></Link>
+
+<Link to="/notifications"><button>Notifications</button></Link>
+
+<Link to="/analytics"><button>Analytics</button></Link>
+
+<Link to="/charts"><button>Charts</button></Link>
+
+<Link to="/testing"><button>Testing Metrics</button></Link>
+
+</div>
 
 </div>
 

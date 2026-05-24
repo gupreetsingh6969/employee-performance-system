@@ -1,36 +1,36 @@
 import { useState } from "react";
 
-function Achievements(){
+function Feedback(){
 
-const [achievementList,setAchievementList]=useState([
+const [feedbackList,setFeedbackList]=useState([
 
 {
 id:1,
 employee:"John",
-achievement:"Employee of the Month"
+feedback:"Excellent communication skills"
 },
 
 {
 id:2,
 employee:"Sarah",
-achievement:"Best Team Contributor"
+feedback:"Needs additional training in reporting"
 }
 
 ]);
 
-const addAchievement=()=>{
+const addFeedback=()=>{
 
-const newAchievement={
+const newFeedback={
 
 id:Date.now(),
 employee:"New Employee",
-achievement:"Project Excellence Award"
+feedback:"Good performance improvement"
 
 };
 
-setAchievementList([
-...achievementList,
-newAchievement
+setFeedbackList([
+...feedbackList,
+newFeedback
 ]);
 
 };
@@ -40,26 +40,26 @@ return(
 <div style={{padding:"20px"}}>
 
 <h1>
-Achievements
+Employee Feedback
 </h1>
 
 <br/>
 
 <button
-onClick={addAchievement}
+onClick={addFeedback}
 style={{
 padding:"10px",
 cursor:"pointer"
 }}
 >
-Add Achievement
+Add Feedback
 </button>
 
 <br/><br/>
 
 {
 
-achievementList.map((item)=>(
+feedbackList.map((item)=>(
 
 <div
 key={item.id}
@@ -73,7 +73,7 @@ borderRadius:"10px"
 
 <h3>{item.employee}</h3>
 
-<p>{item.achievement}</p>
+<p>{item.feedback}</p>
 
 </div>
 
@@ -87,4 +87,4 @@ borderRadius:"10px"
 
 }
 
-export default Achievements;
+export default Feedback;

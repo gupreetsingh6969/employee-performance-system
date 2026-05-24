@@ -1,95 +1,78 @@
-const currentUserType = localStorage.getItem("userRole");
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-<div
-style={{
-display:"flex",
-flexDirection:"column",
-gap:"14px"
-}}
->
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import AIRecommendations from "./pages/AIRecommendations";
+import Notifications from "./pages/Notifications";
+import TestingMetrics from "./pages/TestingMetrics";
+import Analytics from "./pages/Analytics";
 
-<Link
-to="/dashboard"
-style={{color:"white"}}
->
-Dashboard
-</Link>
+import ProtectedRoute from "./components/ProtectedRoute";
 
+function App(){
 
-{currentUserType === "ADMIN" && (
+return(
 
-<div
-style={{
-display:"flex",
-flexDirection:"column",
-gap:"14px"
-}}
->
+<BrowserRouter>
 
-<Link
-to="/employees"
-style={{color:"white"}}
->
-Employee Records
-</Link>
+<Routes>
 
-<Link
-to="/tasks"
-style={{color:"white"}}
->
-Task Center
-</Link>
+<Route
+path="/"
+element={<Login/>}
+/>
 
-</div>
+<Route
+path="/dashboard"
+element={
+<ProtectedRoute>
+<Dashboard/>
+</ProtectedRoute>
+}
+/>
 
-)}
+<Route
+path="/ai"
+element={
+<ProtectedRoute>
+<AIRecommendations/>
+</ProtectedRoute>
+}
+/>
 
+<Route
+path="/notifications"
+element={
+<ProtectedRoute>
+<Notifications/>
+</ProtectedRoute>
+}
+/>
 
-<Link
-to="/performance"
-style={{color:"white"}}
->
-Performance Analysis
-</Link>
+<Route
+path="/analytics"
+element={
+<ProtectedRoute>
+<Analytics/>
+</ProtectedRoute>
+}
+/>
 
+<Route
+path="/testing"
+element={
+<ProtectedRoute>
+<TestingMetrics/>
+</ProtectedRoute>
+}
+/>
 
-<Link
-to="/notifications"
-style={{color:"white"}}
->
-Alerts & Notifications
-</Link>
+</Routes>
 
+</BrowserRouter>
 
-<Link
-to="/processing"
-style={{color:"white"}}
->
-Data Processing
-</Link>
+);
 
+}
 
-<Link
-to="/ai"
-style={{color:"white"}}
->
-AI Insights
-</Link>
-
-
-<Link
-to="/achievements"
-style={{color:"white"}}
->
-Achievements
-</Link>
-
-
-<Link
-to="/testing"
-style={{color:"white"}}
->
-Testing Reports
-</Link>
-
-</div>
+export default App;

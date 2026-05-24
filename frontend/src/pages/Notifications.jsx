@@ -1,85 +1,68 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-function Notifications(){
+function Notifications() {
 
-const [notificationData,setNotificationData] = useState([]);
+const [notificationList, setNotificationList] = useState([]);
 
-const loadNotifications = ()=>{
+useEffect(() => {
 
-setNotificationData([
+const fetchNotifications = async () => {
 
-{
-id:1,
-title:"Performance Review Reminder",
-message:"Quarterly evaluation deadline is approaching",
-status:"Pending"
-},
+try{
 
-{
-id:2,
-title:"Feedback Update",
-message:"New feedback added for employee records",
-status:"Completed"
-},
+const response = await axios.get(
+"http://localhost:5000/api/notifications"
+);
 
-{
-id:3,
-title:"Training Recommendation",
-message:"AI recommends technical skill training",
-status:"New"
+setNotificationList(
+response.data.notifications
+);
+
 }
+catch(error){
 
-]);
+console.log(error);
+
+}
 
 };
 
+fetchNotifications();
 
-useEffect(()=>{
-
-loadNotifications();
-
-},[]);
-
+}, []);
 
 return(
 
 <div style={{padding:"20px"}}>
 
 <h1>
-Notifications Center
+Notifications
 </h1>
 
 <br/>
 
 {
 
-notificationData.map((item)=>(
+notificationList.map((item)=>(
 
 <div
 key={item.id}
 style={{
-border:"1px solid gray",
+border:"1px solid #d1d5db",
 padding:"15px",
-marginBottom:"10px",
-borderRadius:"10px"
+marginBottom:"15px",
+borderRadius:"10px",
+background:"#f9fafb"
 }}
 >
 
 <h3>
-{item.title}
+{item.message}
 </h3>
 
 <p>
-{item.message}
-</p>
-
-<p>
-
-Status:
-<b>
- {item.status}
-</b>
-
+Time: {item.time}
 </p>
 
 </div>
