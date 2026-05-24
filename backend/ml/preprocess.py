@@ -2,23 +2,39 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import joblib
 
-df = pd.read_csv("employee_data.csv")
+# Load employee dataset
+df = pd.read_csv("ml/employee_data.csv")
 
+# Remove missing values
 df = df.dropna()
 
+# Features from your current CSV
 features = [
-    "tasks_completed",
-    "feedback_score",
+    "score",
+    "tasksCompleted",
     "attendance",
-    "achievement_score"
+    "feedbackRating"
 ]
 
+# Scale data
 scaler = StandardScaler()
 
-df[features] = scaler.fit_transform(df[features])
+df[features] = scaler.fit_transform(
+    df[features]
+)
 
-joblib.dump(scaler, "scaler.pkl")
+# Save scaler model
+joblib.dump(
+    scaler,
+    "ml/scaler.pkl"
+)
 
-df.to_csv("processed_data.csv", index=False)
+# Save processed data
+df.to_csv(
+    "ml/processed_data.csv",
+    index=False
+)
 
 print("Data preprocessing completed")
+print("\nProcessed Data Preview:\n")
+print(df.head())

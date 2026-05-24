@@ -1,36 +1,36 @@
 import pandas as pd
 import joblib
-import os
+import sys
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
+# Load trained model
+model = joblib.load("ml/employee_model.pkl")
 
-model_path = os.path.join(
-    current_dir,
-    "employee_model.pkl"
+# Take values from command line
+score = float(sys.argv[1])
+tasksCompleted = float(sys.argv[2])
+attendance = float(sys.argv[3])
+feedbackRating = float(sys.argv[4])
+
+# Create input data
+data = pd.DataFrame(
+    [[
+        score,
+        tasksCompleted,
+        attendance,
+        feedbackRating
+    ]],
+    columns=[
+        "score",
+        "tasksCompleted",
+        "attendance",
+        "feedbackRating"
+    ]
 )
 
-model = joblib.load(model_path)
+# Prediction
+prediction = model.predict(data)
 
-sample = pd.DataFrame([{
-    "tasks_completed": 85,
-    "feedback_score": 4.6,
-    "attendance": 92,
-    "achievement_score": 89
-}])
-
-prediction = model.predict(sample)[0]
-
-if prediction == 1:
-    result = """
-Top Performer
-Training Recommendation: Leadership Skills
-Performance Trend: Improving
-"""
+if prediction[0] == 1:
+    print("Top Performer")
 else:
-    result = """
-Needs Improvement
-Training Recommendation: Technical Upskilling
-Performance Trend: Declining
-"""
-
-print(result)
+    print("Training Required")

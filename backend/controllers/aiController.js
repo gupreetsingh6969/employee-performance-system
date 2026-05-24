@@ -1,58 +1,68 @@
 import { PrismaClient } from "@prisma/client";
+import { exec } from "child_process";
 
 const prisma = new PrismaClient();
 
-export const getRecommendations = async (req,res)=>{
+export const getRecommendations = async (req,res) => {
 
 try{
 
-const employees = await prisma.employee.findMany();
+const employees =
+await prisma.employee.findMany();
 
-const recommendations = employees.map(employee=>{
+const results=[];
 
-const score = Number(employee.performanceScore);
+for(const employee of employees){
 
-let status="";
-let recommendation="";
+const score=
+employee.performanceScore;
 
-if(score>=85){
+const tasksCompleted=30;
+const attendance=90;
+const feedbackRating=4;
 
-status="Top Performer";
-recommendation="Promotion + Leadership Program";
+const command=
+`python ml/predict.py ${score} ${tasksCompleted} ${attendance} ${feedbackRating}`;
 
-}
-else if(score>=60){
+const prediction=
+await new Promise((resolve,reject)=>{
 
-status="Average Performer";
-recommendation="Skill Enhancement Training";
+exec(
+command,
+(error,stdout)=>{
+
+if(error){
+
+reject(error);
 
 }
 else{
 
-status="Needs Improvement";
-recommendation="Technical Mentoring Required";
+resolve(
+stdout.trim()
+);
 
 }
 
-return{
+});
+
+});
+
+results.push({
 
 name:employee.name,
 department:employee.department,
 score,
-feedback:employee.feedback,
-achievements:employee.achievements,
-status,
-recommendation
-
-};
+recommendation:prediction
 
 });
+
+}
 
 res.status(200).json({
 
 success:true,
-count:recommendations.length,
-data:recommendations
+data:results
 
 });
 
