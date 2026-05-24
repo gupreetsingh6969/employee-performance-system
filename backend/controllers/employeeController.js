@@ -38,7 +38,9 @@ export const createEmployee = async (req, res) => {
         email: req.body.email,
         department: req.body.department,
         position: req.body.position,
-        performanceScore: Number(req.body.performanceScore)
+        performanceScore: Number(req.body.performanceScore),
+        feedback: req.body.feedback,
+        achievements: req.body.achievements
       }
     });
 
@@ -73,7 +75,9 @@ export const updateEmployee = async (req, res) => {
         email: req.body.email,
         department: req.body.department,
         position: req.body.position,
-        performanceScore: Number(req.body.performanceScore)
+        performanceScore: Number(req.body.performanceScore),
+        feedback: req.body.feedback,
+        achievements: req.body.achievements
       }
     });
 

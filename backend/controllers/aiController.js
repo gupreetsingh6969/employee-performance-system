@@ -10,23 +10,27 @@ const employees = await prisma.employee.findMany();
 
 const recommendations = employees.map(employee=>{
 
+const score = Number(employee.performanceScore);
+
+let status="";
 let recommendation="";
 
-const score=Number(employee.performanceScore);
+if(score>=85){
 
-if(score<60){
-
-recommendation="Needs training and mentoring";
+status="Top Performer";
+recommendation="Promotion + Leadership Program";
 
 }
-else if(score>=60 && score<80){
+else if(score>=60){
 
-recommendation="Good performance, improve skills";
+status="Average Performer";
+recommendation="Skill Enhancement Training";
 
 }
 else{
 
-recommendation="Eligible for promotion";
+status="Needs Improvement";
+recommendation="Technical Mentoring Required";
 
 }
 
@@ -34,7 +38,10 @@ return{
 
 name:employee.name,
 department:employee.department,
-score:score,
+score,
+feedback:employee.feedback,
+achievements:employee.achievements,
+status,
 recommendation
 
 };
@@ -44,6 +51,7 @@ recommendation
 res.status(200).json({
 
 success:true,
+count:recommendations.length,
 data:recommendations
 
 });

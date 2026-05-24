@@ -8,6 +8,7 @@ import employeeRoutes from "./routes/employeeRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -77,6 +78,11 @@ aiRoutes
 app.use(
 "/api/notifications",
 notificationRoutes
+);
+
+app.use(
+"/api/dashboard",
+dashboardRoutes
 );
 
 

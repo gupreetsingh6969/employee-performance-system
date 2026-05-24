@@ -2,38 +2,36 @@
 
 ## Project Overview
 
-Employee Performance System is a desktop/web application designed to track employee performance metrics, analyze trends, and provide AI-based recommendations for improving productivity and training programs.
+Employee Performance System is a web application designed to track employee performance metrics, analyze trends, and provide AI-based recommendations for improving productivity and training programs.
 
-The system enables managers and HR teams to monitor employee performance, feedback, attendance, achievements, and analytics through an interactive dashboard.
+The system enables managers and HR teams to monitor employee performance, feedback, achievements, and analytics through an interactive dashboard.
 
 ---
 
 ## Features
 
 ### Authentication & Access Control
-- Secure Login System
-- Role-based access (HR / Manager)
+- Secure JWT Login System
+- Role-based access (Admin / HR / Manager / Employee)
 - Protected routes
 
 ### Employee Management
 - Employee records management
-- Task tracking
 - Performance metrics
 - Feedback management
 - Achievement tracking
 
-### AI & Machine Learning
-- Historical data preprocessing
-- Performance prediction model
-- AI recommendations
+### AI Recommendation Module
+- Performance score analysis
 - Top performer identification
 - Training need analysis
+- AI-based recommendations
 
 ### Analytics Dashboard
-- Employee analytics
-- Attendance tracking
+- Total employee analytics
+- Top performer analytics
+- Average performance score
 - Performance trends
-- Task completion statistics
 
 ### Notifications
 - Evaluation deadline reminders
@@ -41,10 +39,9 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - Training notifications
 
 ### Testing & Metrics
-- AI Prediction Accuracy
-- API Success Rate
-- Response Time Monitoring
-- Usability Score
+- API testing
+- Response validation
+- Authentication testing
 
 ---
 
@@ -61,14 +58,12 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - Express.js
 
 ### Database
-- MongoDB
+- PostgreSQL
+- Prisma ORM
 
-### AI / Machine Learning
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- Joblib
+### Authentication
+- JWT
+- bcryptjs
 
 ---
 
@@ -79,6 +74,41 @@ Frontend (React + Vite)
         ↓
 Backend API (Node.js + Express)
         ↓
-Database (MongoDB)
+PostgreSQL Database (Prisma ORM)
         ↓
-AI Module (Python ML Model)
+AI Recommendation Engine
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+- POST /api/auth/register
+- POST /api/auth/login
+
+### Employees
+- GET /api/employees
+- POST /api/employees
+- PUT /api/employees/:id
+- DELETE /api/employees/:id
+
+### AI
+- GET /api/ai
+
+### Notifications
+- GET /api/notifications
+
+### Dashboard
+- GET /api/dashboard
+
+---
+
+## Usage
+
+1. Register a user
+2. Login and obtain JWT token
+3. Access protected APIs
+4. Add employee performance data
+5. View dashboard analytics
+6. Get AI recommendations

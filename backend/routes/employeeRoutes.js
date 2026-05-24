@@ -7,14 +7,37 @@ updateEmployee,
 deleteEmployee
 } from "../controllers/employeeController.js";
 
-const router=express.Router();
+import verifyToken from "../middleware/authMiddleware.js";
+import authorizeRoles from "../middleware/roleMiddleware.js";
 
-router.get("/",getEmployees);
+const router = express.Router();
 
-router.post("/",createEmployee);
+router.get(
+  "/",
+  verifyToken,
+  authorizeRoles("HR","Manager"),
+  getEmployees
+);
 
-router.put("/:id",updateEmployee);
+router.post(
+  "/",
+  verifyToken,
+  authorizeRoles("HR"),
+  createEmployee
+);
 
-router.delete("/:id",deleteEmployee);
+router.put(
+  "/:id",
+  verifyToken,
+  authorizeRoles("HR","Manager"),
+  updateEmployee
+);
+
+router.delete(
+  "/:id",
+  verifyToken,
+  authorizeRoles("HR"),
+  deleteEmployee
+);
 
 export default router;
