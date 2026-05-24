@@ -17,42 +17,72 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(
+express.urlencoded({
+extended:true
+})
+);
 
-try {
 
-  await connectDatabase();
+// Database connection
+try{
 
-  console.log(
-    "Database connected"
-  );
+await connectDatabase();
 
-} catch(error){
+console.log(
+"Database connected successfully"
+);
 
-  console.log(error);
+}
+catch(error){
+
+console.log(
+"Database Connection Failed"
+);
+
+console.log(error);
 
 }
 
-app.get("/", (req,res)=>{
 
-  res.status(200).json({
+// Home route
+app.get("/",(req,res)=>{
 
-    success:true,
-    message:"Employee Performance Backend Active"
+res.status(200).json({
 
-  });
+success:true,
+message:"Employee Performance Backend Active"
 
 });
 
-app.use("/api/employees", employeeRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/ai", aiRoutes);
-app.use("/api/notifications", notificationRoutes);
+});
 
-const PORT =
-process.env.PORT || 8080;
+
+// Routes
+app.use(
+"/api/employees",
+employeeRoutes
+);
+
+app.use(
+"/api/auth",
+authRoutes
+);
+
+app.use(
+"/api/ai",
+aiRoutes
+);
+
+app.use(
+"/api/notifications",
+notificationRoutes
+);
+
+
+// Start server
+const PORT=
+process.env.PORT || 5000;
 
 app.listen(PORT,()=>{
 
