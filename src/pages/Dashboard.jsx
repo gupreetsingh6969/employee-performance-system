@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 import {
 BarChart,
@@ -11,17 +12,13 @@ CartesianGrid,
 ResponsiveContainer
 } from "recharts";
 
-function Dashboard() {
+function Dashboard(){
 
-const [stats, setStats] = useState({
+const [stats,setStats]=useState({
 totalEmployees:0,
 averageScore:0,
 highestScore:0
 });
-
-const [loading,setLoading]=useState(true);
-
-const [error,setError]=useState("");
 
 useEffect(()=>{
 
@@ -29,54 +26,51 @@ loadDashboard();
 
 },[]);
 
-const loadDashboard = async () => {
+const loadDashboard=async()=>{
 
-try {
+try{
 
-setLoading(true);
-
-setError("");
-
-const token =
-localStorage.getItem("token");
-
-const response =
+const response=
 await axios.get(
 "http://localhost:5000/api/employees",
 {
 headers:{
-Authorization:`Bearer ${token}`
+Authorization:
+`Bearer ${localStorage.getItem("token")}`
 }
 }
 );
 
-const employees =
+const employees=
 response.data.data || [];
 
-const totalEmployees =
+const totalEmployees=
 employees.length;
 
-const totalScore =
+const totalScore=
 employees.reduce(
-(sum,employee)=>
-sum + Number(employee.performanceScore || 0),
+(sum,e)=>
+sum+Number(e.performanceScore||0),
 0
 );
 
-const averageScore =
-employees.length > 0
-? (totalScore / employees.length).toFixed(1)
-: 0;
+const averageScore=
+employees.length>0
+?
+(totalScore/employees.length).toFixed(1)
+:
+0;
 
-const highestScore =
-employees.length > 0
-? Math.max(
+const highestScore=
+employees.length>0
+?
+Math.max(
 ...employees.map(
-employee =>
-Number(employee.performanceScore || 0)
+e=>Number(e.performanceScore||0)
 )
 )
-: 0;
+:
+0;
 
 setStats({
 totalEmployees,
@@ -89,59 +83,87 @@ catch(error){
 
 console.log(error);
 
-setError(
-"Failed to load dashboard data"
-);
-
-}
-finally{
-
-setLoading(false);
-
 }
 
 };
 
-if(loading){
-
-return <h2>Loading...</h2>;
-
-}
-
-if(error){
-
-return <h2>{error}</h2>;
-
-}
-
 return(
 
-<div style={{padding:"30px"}}>
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
+
+<Sidebar/>
+
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
 
 <h1>Employee Dashboard</h1>
 
-<div>
+<div
+style={{
+display:"flex",
+gap:"20px",
+marginTop:"30px",
+flexWrap:"wrap"
+}}
+>
 
-<h3>
-Total Employees: {stats.totalEmployees}
-</h3>
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+minWidth:"220px"
+}}
+>
+<h3>Total Employees</h3>
+<h2>{stats.totalEmployees}</h2>
+</div>
 
-<h3>
-Average Score: {stats.averageScore}
-</h3>
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+minWidth:"220px"
+}}
+>
+<h3>Average Score</h3>
+<h2>{stats.averageScore}</h2>
+</div>
 
-<h3>
-Highest Score: {stats.highestScore}
-</h3>
+<div
+style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
+minWidth:"220px"
+}}
+>
+<h3>Highest Score</h3>
+<h2>{stats.highestScore}</h2>
+</div>
 
 </div>
 
-<h2 style={{marginTop:"30px"}}>
+<h2 style={{marginTop:"40px"}}>
 Performance Analytics
 </h2>
 
 <div
 style={{
+background:"white",
+padding:"20px",
+borderRadius:"12px",
 height:"400px",
 marginTop:"20px"
 }}
@@ -178,6 +200,8 @@ performanceScore:Number(stats.highestScore)
 </BarChart>
 
 </ResponsiveContainer>
+
+</div>
 
 </div>
 

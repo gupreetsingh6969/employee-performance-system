@@ -1,60 +1,114 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 function AIRecommendations() {
 
-    const [prediction, setPrediction] = useState("");
+const [prediction,setPrediction]=useState("");
 
-    useEffect(() => {
+const [loading,setLoading]=useState(true);
 
-        const fetchPrediction = async () => {
+useEffect(()=>{
 
-            try {
+fetchPrediction();
 
-                const response = await axios.get(
-                    "https://employee-performance-system-production-2fc6.up.railway.app/api/predict"
-                );
+},[]);
 
-                setPrediction(
-                    response.data.prediction
-                );
+const fetchPrediction=async()=>{
 
-            } catch (error) {
-                console.log(error);
-            }
+try{
 
-        };
+const response=
+await axios.get(
+"https://employee-performance-system-production-2fc6.up.railway.app/api/predict"
+);
 
-        fetchPrediction();
+setPrediction(
+response.data.prediction || "No prediction available"
+);
 
-    }, []);
+}
+catch(error){
 
-    return (
+console.log(error);
 
-        <div style={{padding:"20px"}}>
+setPrediction(
+"Unable to load AI recommendation"
+);
 
-            <h1>AI Recommendations</h1>
+}
+finally{
 
-            <div
-                style={{
-                    border:"1px solid #ccc",
-                    padding:"20px",
-                    borderRadius:"10px"
-                }}
-            >
-                <pre
-                    style={{
-                        whiteSpace:"pre-wrap",
-                        fontSize:"18px"
-                    }}
-                >
-                    {prediction}
-                </pre>
-            </div>
+setLoading(false);
 
-        </div>
+}
 
-    );
+};
+
+return(
+
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
+
+<Sidebar/>
+
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
+
+<h1>
+AI Recommendations
+</h1>
+
+{
+
+loading
+?
+
+<h2>Loading...</h2>
+
+:
+
+<div
+style={{
+background:"white",
+padding:"25px",
+borderRadius:"12px",
+marginTop:"20px",
+boxShadow:"0px 2px 10px rgba(0,0,0,0.1)"
+}}
+>
+
+<h3>
+AI Prediction Result
+</h3>
+
+<p
+style={{
+fontSize:"18px",
+marginTop:"15px"
+}}
+>
+{prediction}
+</p>
+
+</div>
+
+}
+
+</div>
+
+</div>
+
+);
 
 }
 

@@ -1,31 +1,10 @@
-import {useEffect,useState} from "react";
+import { useEffect,useState } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 function EmployeeList(){
 
 const [employees,setEmployees]=useState([]);
-const [search,setSearch]=useState("");
-
-const fetchEmployees=async()=>{
-
-try{
-
-const response=await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
-);
-
-setEmployees(
-response.data.data
-);
-
-}
-catch(error){
-
-console.log(error);
-
-}
-
-};
 
 useEffect(()=>{
 
@@ -33,15 +12,24 @@ fetchEmployees();
 
 },[]);
 
-const deleteEmployee=async(id)=>{
+const fetchEmployees=async()=>{
 
 try{
 
-await axios.delete(
-`https://employee-performance-system-production-2fc6.up.railway.app/api/employees/${id}`
+const response=
+await axios.get(
+"http://localhost:5000/api/employees",
+{
+headers:{
+Authorization:
+`Bearer ${localStorage.getItem("token")}`
+}
+}
 );
 
-fetchEmployees();
+setEmployees(
+response.data.data || []
+);
 
 }
 catch(error){
@@ -52,61 +40,52 @@ console.log(error);
 
 };
 
-const filteredEmployees=
-
-employees.filter((employee)=>
-
-employee.name.toLowerCase().includes(
-search.toLowerCase()
-)
-
-||
-
-employee.department.toLowerCase().includes(
-search.toLowerCase()
-)
-
-);
-
 return(
 
-<div style={{padding:"20px"}}>
-
-<h1>Employee List</h1>
-
-<input
-
-type="text"
-placeholder="Search by Name or Department"
-
-value={search}
-
-onChange={(e)=>
-setSearch(e.target.value)
-}
-
+<div
 style={{
-
-padding:"8px",
-marginBottom:"20px",
-width:"250px"
-
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
 }}
+>
 
-/>
+<Sidebar/>
 
-<table border="1" cellPadding="10">
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
+
+<h1>
+Employees
+</h1>
+
+<div
+style={{
+background:"white",
+marginTop:"20px",
+borderRadius:"12px",
+padding:"20px"
+}}
+>
+
+<table
+style={{
+width:"100%",
+borderCollapse:"collapse"
+}}
+>
 
 <thead>
 
 <tr>
 
 <th>Name</th>
-<th>Email</th>
 <th>Department</th>
-<th>Position</th>
 <th>Score</th>
-<th>Action</th>
 
 </tr>
 
@@ -116,33 +95,15 @@ width:"250px"
 
 {
 
-filteredEmployees.map((employee)=>(
+employees.map((employee,index)=>(
 
-<tr key={employee._id}>
+<tr key={index}>
 
 <td>{employee.name}</td>
-<td>{employee.email}</td>
+
 <td>{employee.department}</td>
-<td>{employee.position}</td>
+
 <td>{employee.performanceScore}</td>
-
-<td>
-
-<button>
-Edit
-</button>
-
-{" "}
-
-<button
-onClick={()=>
-deleteEmployee(employee._id)
-}
->
-Delete
-</button>
-
-</td>
 
 </tr>
 
@@ -153,7 +114,11 @@ Delete
 </tbody>
 
 </table>
-cd ..
+
+</div>
+
+</div>
+
 </div>
 
 );

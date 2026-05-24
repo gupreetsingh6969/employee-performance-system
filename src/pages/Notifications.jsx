@@ -1,75 +1,70 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
-function Notifications() {
+function Notifications(){
 
-const [notificationList, setNotificationList] = useState([]);
+const notifications=[
 
-useEffect(() => {
+"Performance report generated",
+"AI recommendations available",
+"New employee added",
+"Training session scheduled"
 
-const fetchNotifications = async () => {
-
-try{
-
-const response = await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/notifications"
-);
-
-setNotificationList(
-response.data.notifications
-);
-
-}
-catch(error){
-
-console.log(error);
-
-}
-
-};
-
-fetchNotifications();
-
-}, []);
+];
 
 return(
 
-<div style={{padding:"20px"}}>
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
+
+<Sidebar/>
+
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
 
 <h1>
 Notifications
 </h1>
 
-<br/>
-
-{
-
-notificationList.map((item)=>(
-
 <div
-key={item.id}
 style={{
-border:"1px solid #d1d5db",
-padding:"15px",
-marginBottom:"15px",
-borderRadius:"10px",
-background:"#f9fafb"
+marginTop:"20px"
 }}
 >
 
-<h3>
-{item.message}
-</h3>
+{
 
-<p>
-Time: {item.time}
-</p>
+notifications.map((item,index)=>(
+
+<div
+key={index}
+style={{
+background:"white",
+padding:"15px",
+marginBottom:"15px",
+borderRadius:"10px"
+}}
+>
+
+🔔 {item}
 
 </div>
 
 ))
 
 }
+
+</div>
+
+</div>
 
 </div>
 

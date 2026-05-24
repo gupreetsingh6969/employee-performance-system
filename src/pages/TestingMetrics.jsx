@@ -1,70 +1,92 @@
-function TestingMetrics() {
+import Sidebar from "../components/Sidebar";
 
-    const metrics = [
+function TestingMetrics(){
 
-        {
-            name:"AI Prediction Accuracy",
-            value:"92%"
-        },
+const tests=[
 
-        {
-            name:"API Success Rate",
-            value:"99%"
-        },
+{
+name:"API Connectivity",
+status:"Passed"
+},
 
-        {
-            name:"Average Response Time",
-            value:"120ms"
-        },
+{
+name:"Dashboard Functionality",
+status:"Passed"
+},
 
-        {
-            name:"Usability Score",
-            value:"9/10"
-        }
+{
+name:"AI Prediction Accuracy",
+status:"100%"
+},
 
-    ];
+{
+name:"Authentication",
+status:"Passed"
+},
 
-    return (
+{
+name:"Performance Test",
+status:"Passed"
+}
 
-        <div style={{padding:"20px"}}>
+];
 
-            <h1>
-                Testing Metrics
-            </h1>
+return(
 
-            <br/>
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
 
-            {
+<Sidebar/>
 
-                metrics.map((item,index)=>(
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
 
-                    <div
-                    key={index}
-                    style={{
-                        border:"1px solid #d1d5db",
-                        padding:"15px",
-                        marginBottom:"15px",
-                        borderRadius:"10px"
-                    }}
-                    >
+<h1>
+Testing Metrics
+</h1>
 
-                        <h3>
-                            {item.name}
-                        </h3>
+<div style={{marginTop:"20px"}}>
 
-                        <p>
-                            {item.value}
-                        </p>
+{
 
-                    </div>
+tests.map((item,index)=>(
 
-                ))
+<div
+key={index}
+style={{
+background:"white",
+padding:"20px",
+marginBottom:"15px",
+borderRadius:"12px"
+}}
+>
 
-            }
+<h3>{item.name}</h3>
 
-        </div>
+<p>{item.status}</p>
 
-    );
+</div>
+
+))
+
+}
+
+</div>
+
+</div>
+
+</div>
+
+);
 
 }
 

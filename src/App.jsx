@@ -2,18 +2,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import EmployeeList from "./pages/EmployeeList";
+import AddEmployee from "./pages/AddEmployee";
+import Analytics from "./pages/Analytics";
 import AIRecommendations from "./pages/AIRecommendations";
 import Notifications from "./pages/Notifications";
 import TestingMetrics from "./pages/TestingMetrics";
-import Analytics from "./pages/Analytics";
-import AddEmployee from "./pages/AddEmployee";
-import EmployeeList from "./pages/EmployeeList";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
-return (
+return(
 
 <BrowserRouter>
 
@@ -52,6 +52,15 @@ element={
 />
 
 <Route
+path="/analytics"
+element={
+<ProtectedRoute>
+<Analytics/>
+</ProtectedRoute>
+}
+/>
+
+<Route
 path="/ai"
 element={
 <ProtectedRoute>
@@ -65,15 +74,6 @@ path="/notifications"
 element={
 <ProtectedRoute>
 <Notifications/>
-</ProtectedRoute>
-}
-/>
-
-<Route
-path="/analytics"
-element={
-<ProtectedRoute>
-<Analytics/>
 </ProtectedRoute>
 }
 />
