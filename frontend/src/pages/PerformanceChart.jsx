@@ -41,7 +41,7 @@ const loadData=async()=>{
 try{
 
 const response=await axios.get(
-"http://localhost:5000/api/employees"
+"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
 );
 
 setEmployees(
