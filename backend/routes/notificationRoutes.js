@@ -1,14 +1,8 @@
 import express from "express";
+import { getNotifications } from "../controllers/notificationController.js";
 
 const router = express.Router();
 
-// Notification Route
-router.get("/", (req, res) => {
-
-  return res.status(200).json({
-    message: "Notifications route working"
-  });
-
-});
+router.get("/", getNotifications);
 
 export default router;

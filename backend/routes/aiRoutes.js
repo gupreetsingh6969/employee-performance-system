@@ -1,56 +1,48 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import { spawn } from "child_process";
+import path from "path";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
-router.get("/recommendations", async (req, res) => {
+router.get("/predict", (req, res) => {
 
-  try {
+    const pythonFile = path.join(
+        process.cwd(),
+        "ml",
+        "predict.py"
+    );
 
-    const performances =
-      await prisma.performance.findMany({
-        include: {
-          employee: true
+    const python = spawn(
+        "python",
+        [pythonFile]
+    );
+
+    let result = "";
+    let error = "";
+
+    python.stdout.on("data", (data) => {
+        result += data.toString();
+    });
+
+    python.stderr.on("data", (data) => {
+        error += data.toString();
+    });
+
+    python.on("close", () => {
+
+        if(error){
+            return res.status(500).json({
+                success:false,
+                error:error
+            });
         }
-      });
 
-    const results = performances.map((record) => {
-
-      let prediction = "";
-      let trainingNeed = "";
-
-      if (record.rating >= 8) {
-        prediction = "Top Performer";
-        trainingNeed = "Advanced leadership training";
-      }
-      else if (record.rating <= 5) {
-        prediction = "Needs Improvement";
-        trainingNeed = "Skill development recommended";
-      }
-      else {
-        prediction = "Average Performer";
-        trainingNeed = "Regular mentoring";
-      }
-
-      return {
-        employee: record.employee.name,
-        rating: record.rating,
-        prediction,
-        recommendation: trainingNeed
-      };
+        res.json({
+            success:true,
+            prediction:result.trim()
+        });
 
     });
-
-    res.json(results);
-
-  } catch (error) {
-
-    res.status(500).json({
-      error: error.message
-    });
-
-  }
 
 });
 
