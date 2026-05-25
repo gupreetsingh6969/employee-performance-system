@@ -5,7 +5,6 @@ import axios from "axios";
 function AddEmployee() {
 
 const [searchParams] = useSearchParams();
-
 const employeeId = searchParams.get("id");
 
 const [employee, setEmployee] = useState({
@@ -38,21 +37,33 @@ const loadEmployee=async()=>{
 try{
 
 const response=await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
+"http://localhost:5000/api/employees"
 );
 
-const selectedEmployee =
-response.data.data.find(
-(emp)=>emp._id===employeeId
+const employees=response.data;
+
+const selectedEmployee=
+employees.find(
+(emp)=>String(emp.id)===String(employeeId)
 );
 
 if(selectedEmployee){
-setEmployee(selectedEmployee);
+
+setEmployee({
+name:selectedEmployee.name || "",
+email:selectedEmployee.email || "",
+department:selectedEmployee.department || "",
+position:selectedEmployee.position || "",
+performanceScore:selectedEmployee.performanceScore || ""
+});
+
 }
 
 }
 catch(error){
+
 console.log(error);
+
 }
 
 };
@@ -61,11 +72,21 @@ const handleSubmit=async()=>{
 
 try{
 
+const payload={
+
+name:employee.name,
+email:employee.email,
+department:employee.department,
+position:employee.position,
+performanceScore:Number(employee.performanceScore)
+
+};
+
 if(employeeId){
 
 await axios.put(
-`https://employee-performance-system-production-2fc6.up.railway.app/api/employees/${employeeId}`,
-employee
+`http://localhost:5000/api/employees/${employeeId}`,
+payload
 );
 
 alert("Employee Updated");
@@ -74,8 +95,8 @@ alert("Employee Updated");
 else{
 
 await axios.post(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees",
-employee
+"http://localhost:5000/api/employees",
+payload
 );
 
 alert("Employee Added");
@@ -140,6 +161,7 @@ onChange={handleChange}
 <br/><br/>
 
 <input
+type="number"
 name="performanceScore"
 placeholder="Performance Score"
 value={employee.performanceScore}

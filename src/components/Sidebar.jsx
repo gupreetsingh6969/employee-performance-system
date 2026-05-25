@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 
 function Sidebar(){
 
+const role=localStorage.getItem("role");
+
 return(
 
 <div
@@ -44,6 +46,8 @@ textDecoration:"none"
 📊 Dashboard
 </Link>
 
+{(role==="HR" || role==="ADMIN") && (
+
 <Link
 to="/employees"
 style={{
@@ -53,6 +57,8 @@ textDecoration:"none"
 >
 👨‍💼 Employees
 </Link>
+
+)}
 
 <Link
 to="/ai"
@@ -74,6 +80,8 @@ textDecoration:"none"
 🔔 Notifications
 </Link>
 
+{(role==="MANAGER" || role==="ADMIN") && (
+
 <Link
 to="/analytics"
 style={{
@@ -83,6 +91,8 @@ textDecoration:"none"
 >
 📈 Analytics
 </Link>
+
+)}
 
 <Link
 to="/testing"
@@ -98,8 +108,10 @@ textDecoration:"none"
 
 <button
 onClick={()=>{
+
 localStorage.clear();
 window.location="/";
+
 }}
 style={{
 marginTop:"40px",

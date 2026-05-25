@@ -16,7 +16,9 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - Protected routes
 
 ### Employee Management
-- Employee records management
+- Add Employee
+- Edit Employee
+- Delete Employee
 - Performance metrics
 - Feedback management
 - Achievement tracking
@@ -31,7 +33,7 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - Total employee analytics
 - Top performer analytics
 - Average performance score
-- Performance trends
+- Performance trends visualization
 
 ### Notifications
 - Evaluation deadline reminders
@@ -40,8 +42,9 @@ The system enables managers and HR teams to monitor employee performance, feedba
 
 ### Testing & Metrics
 - API testing
-- Response validation
 - Authentication testing
+- AI prediction testing
+- System response metrics
 
 ---
 
@@ -67,6 +70,38 @@ The system enables managers and HR teams to monitor employee performance, feedba
 
 ---
 
+## Installation
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## Environment Variables
+
+Backend `.env`
+
+```env
+DATABASE_URL=your_database_url
+JWT_SECRET=your_secret_key
+PORT=5000
+```
+
+---
+
 ## System Architecture
 
 ```text
@@ -74,7 +109,13 @@ Frontend (React + Vite)
         ↓
 Backend API (Node.js + Express)
         ↓
-PostgreSQL Database (Prisma ORM)
+Authentication Middleware
+        ↓
+Controllers
+        ↓
+Prisma ORM
+        ↓
+PostgreSQL Database
         ↓
 AI Recommendation Engine
 ```
@@ -99,16 +140,14 @@ AI Recommendation Engine
 ### Notifications
 - GET /api/notifications
 
-### Dashboard
-- GET /api/dashboard
-
 ---
 
 ## Usage
 
-1. Register a user
-2. Login and obtain JWT token
-3. Access protected APIs
-4. Add employee performance data
-5. View dashboard analytics
-6. Get AI recommendations
+1. Register user
+2. Login using credentials
+3. Access dashboard
+4. Add employee records
+5. View analytics
+6. Check AI recommendations
+7. Receive notifications

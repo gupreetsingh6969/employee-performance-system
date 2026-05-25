@@ -1,87 +1,128 @@
 import { useState } from "react";
 
-function Employee(){
+function Employees(){
 
-const [employeeList,setEmployeeList]=useState([
+const [employees,setEmployees]=useState([
 
 {
 id:1,
 name:"John",
 department:"Development",
-rating:"92%"
+score:"92%"
 },
 
 {
 id:2,
 name:"Sarah",
 department:"HR",
-rating:"88%"
+score:"88%"
 }
 
 ]);
 
-const addEmployee=()=>{
+const handleEdit=(id)=>{
 
-const newEmployee={
+const updated=employees.map((employee)=>
 
-id:Date.now(),
-name:"New Employee",
-department:"Training",
-rating:"80%"
+employee.id===id
+?{
+...employee,
+name:prompt(
+"Enter employee name",
+employee.name
+) || employee.name
+}
+:employee
+
+);
+
+setEmployees(updated);
 
 };
 
-setEmployeeList([...employeeList,newEmployee]);
+const handleDelete=(id)=>{
+
+setEmployees(
+
+employees.filter(
+(employee)=>employee.id!==id
+)
+
+);
 
 };
 
 return(
 
-<div style={{padding:"20px"}}>
+<div style={{padding:"40px"}}>
 
-<h1>
-Employee Management
-</h1>
+<h1>Employees</h1>
 
 <br/>
 
-<button
-onClick={addEmployee}
+<table
 style={{
-padding:"10px",
-cursor:"pointer"
-}}
->
-Add Employee
-</button>
-
-<br/><br/>
-
-{
-
-employeeList.map((employee)=>(
-
-<div
-key={employee.id}
-style={{
-border:"1px solid #d1d5db",
-padding:"15px",
-marginBottom:"10px",
+width:"100%",
+background:"white",
 borderRadius:"10px"
 }}
 >
 
-<h3>{employee.name}</h3>
+<thead>
 
-<p>Department: {employee.department}</p>
+<tr>
 
-<p>Performance Rating: {employee.rating}</p>
+<th>Name</th>
+<th>Department</th>
+<th>Score</th>
+<th>Actions</th>
 
-</div>
+</tr>
+
+</thead>
+
+<tbody>
+
+{
+
+employees.map((employee)=>(
+
+<tr key={employee.id}>
+
+<td>{employee.name}</td>
+
+<td>{employee.department}</td>
+
+<td>{employee.score}</td>
+
+<td>
+
+<button
+onClick={()=>handleEdit(employee.id)}
+>
+Edit
+</button>
+
+<button
+onClick={()=>handleDelete(employee.id)}
+style={{
+marginLeft:"10px"
+}}
+>
+Delete
+</button>
+
+</td>
+
+</tr>
 
 ))
 
 }
+
+</tbody>
+
+</table>
 
 </div>
 
@@ -89,4 +130,4 @@ borderRadius:"10px"
 
 }
 
-export default Employee;
+export default Employees;

@@ -5,6 +5,10 @@ import Sidebar from "../components/Sidebar";
 function EmployeeList(){
 
 const [employees,setEmployees]=useState([]);
+const [search,setSearch]=useState("");
+
+const token=
+localStorage.getItem("token");
 
 useEffect(()=>{
 
@@ -18,17 +22,20 @@ try{
 
 const response=
 await axios.get(
+
 "http://localhost:5000/api/employees",
+
 {
 headers:{
 Authorization:
-`Bearer ${localStorage.getItem("token")}`
+`Bearer ${token}`
 }
 }
+
 );
 
 setEmployees(
-response.data.data || []
+response.data
 );
 
 }
@@ -40,42 +47,237 @@ console.log(error);
 
 };
 
+const handleAdd=async()=>{
+
+const name=
+prompt("Employee Name");
+
+const email=
+prompt("Employee Email");
+
+const department=
+prompt("Department");
+
+const position=
+prompt("Position");
+
+const performanceScore=
+prompt("Performance Score");
+
+if(
+!name ||
+!email ||
+!department ||
+!position ||
+!performanceScore
+){
+
+alert("Fill all fields");
+return;
+
+}
+
+try{
+
+await axios.post(
+
+"http://localhost:5000/api/employees",
+
+{
+name,
+email,
+department,
+position,
+performanceScore:Number(
+performanceScore
+)
+},
+
+{
+headers:{
+Authorization:
+`Bearer ${token}`
+}
+}
+
+);
+
+alert(
+"Employee Added"
+);
+
+fetchEmployees();
+
+}
+catch(error){
+
+console.log(
+error.response?.data
+);
+
+alert(
+error.response?.data?.message
+);
+
+}
+
+};
+
+const handleEdit=async(employee)=>{
+
+const name=
+prompt(
+"Name",
+employee.name
+);
+
+const email=
+prompt(
+"Email",
+employee.email
+);
+
+const department=
+prompt(
+"Department",
+employee.department
+);
+
+const position=
+prompt(
+"Position",
+employee.position
+);
+
+const performanceScore=
+prompt(
+"Score",
+employee.performanceScore
+);
+
+try{
+
+await axios.put(
+
+`http://localhost:5000/api/employees/${employee.id}`,
+
+{
+name,
+email,
+department,
+position,
+performanceScore:Number(
+performanceScore
+)
+},
+
+{
+headers:{
+Authorization:
+`Bearer ${token}`
+}
+}
+
+);
+
+alert(
+"Employee Updated"
+);
+
+fetchEmployees();
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+};
+
+const handleDelete=async(id)=>{
+
+try{
+
+await axios.delete(
+
+`http://localhost:5000/api/employees/${id}`,
+
+{
+headers:{
+Authorization:
+`Bearer ${token}`
+}
+}
+
+);
+
+fetchEmployees();
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+};
+
+const filteredEmployees=
+employees.filter(
+
+employee=>
+
+employee.name
+?.toLowerCase()
+.includes(
+search.toLowerCase()
+)
+
+);
+
 return(
 
-<div
-style={{
-display:"flex",
-background:"#f3f4f6",
-minHeight:"100vh"
-}}
->
+<div style={{
+display:"flex"
+}}>
 
 <Sidebar/>
 
-<div
-style={{
+<div style={{
 padding:"30px",
 width:"100%"
-}}
->
+}}>
 
-<h1>
-Employees
-</h1>
+<h1>Employees</h1>
 
-<div
+<br/>
+
+<input
+type="text"
+placeholder="Search..."
+value={search}
+onChange={(e)=>
+setSearch(
+e.target.value
+)
+}
+/>
+
+<button
+onClick={handleAdd}
 style={{
-background:"white",
-marginTop:"20px",
-borderRadius:"12px",
-padding:"20px"
+marginLeft:"10px"
 }}
 >
+➕ Add Employee
+</button>
+
+<br/><br/>
 
 <table
 style={{
-width:"100%",
-borderCollapse:"collapse"
+width:"100%"
 }}
 >
 
@@ -84,8 +286,11 @@ borderCollapse:"collapse"
 <tr>
 
 <th>Name</th>
+<th>Email</th>
 <th>Department</th>
+<th>Position</th>
 <th>Score</th>
+<th>Actions</th>
 
 </tr>
 
@@ -95,27 +300,62 @@ borderCollapse:"collapse"
 
 {
 
-employees.map((employee,index)=>(
+filteredEmployees.map(
 
-<tr key={index}>
+(employee)=>(
+
+<tr
+key={employee.id}
+>
 
 <td>{employee.name}</td>
 
+<td>{employee.email}</td>
+
 <td>{employee.department}</td>
+
+<td>{employee.position}</td>
 
 <td>{employee.performanceScore}</td>
 
+<td>
+
+<button
+onClick={()=>
+handleEdit(
+employee
+)
+}
+>
+Edit
+</button>
+
+<button
+onClick={()=>
+handleDelete(
+employee.id
+)
+}
+style={{
+marginLeft:"10px"
+}}
+>
+Delete
+</button>
+
+</td>
+
 </tr>
 
-))
+)
+
+)
 
 }
 
 </tbody>
 
 </table>
-
-</div>
 
 </div>
 

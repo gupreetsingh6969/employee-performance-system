@@ -8,12 +8,11 @@ import Analytics from "./pages/Analytics";
 import AIRecommendations from "./pages/AIRecommendations";
 import Notifications from "./pages/Notifications";
 import TestingMetrics from "./pages/TestingMetrics";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
-return(
+return (
 
 <BrowserRouter>
 
@@ -21,6 +20,11 @@ return(
 
 <Route
 path="/"
+element={<Login/>}
+/>
+
+<Route
+path="/login"
 element={<Login/>}
 />
 

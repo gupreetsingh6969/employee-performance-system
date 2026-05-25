@@ -2,44 +2,42 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 
-function AIRecommendations() {
+function AIRecommendations(){
 
-const [prediction,setPrediction]=useState("");
-
-const [loading,setLoading]=useState(true);
+const [data,setData]=useState({
+averageScore:0,
+topPerformers:[],
+trainingNeeded:[],
+recommendation:"Loading..."
+});
 
 useEffect(()=>{
 
-fetchPrediction();
+fetchRecommendations();
 
 },[]);
 
-const fetchPrediction=async()=>{
+const fetchRecommendations=async()=>{
 
 try{
 
-const response=
-await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/predict"
+const response=await axios.get(
+"http://localhost:5000/api/ai"
 );
 
-setPrediction(
-response.data.prediction || "No prediction available"
-);
+setData(response.data);
 
 }
 catch(error){
 
 console.log(error);
 
-setPrediction(
-"Unable to load AI recommendation"
-);
-
-}
-finally{
-
-setLoading(false);
+setData({
+averageScore:0,
+topPerformers:[],
+trainingNeeded:[],
+recommendation:"Failed to load AI data"
+});
 
 }
 
@@ -50,7 +48,6 @@ return(
 <div
 style={{
 display:"flex",
-background:"#f3f4f6",
 minHeight:"100vh"
 }}
 >
@@ -60,49 +57,39 @@ minHeight:"100vh"
 <div
 style={{
 padding:"30px",
-width:"100%"
+flex:1,
+background:"#f3f4f6"
 }}
 >
 
-<h1>
-AI Recommendations
-</h1>
-
-{
-
-loading
-?
-
-<h2>Loading...</h2>
-
-:
+<h1>AI Recommendations</h1>
 
 <div
 style={{
 background:"white",
-padding:"25px",
+padding:"20px",
 borderRadius:"12px",
-marginTop:"20px",
-boxShadow:"0px 2px 10px rgba(0,0,0,0.1)"
+marginTop:"20px"
 }}
 >
 
 <h3>
-AI Prediction Result
+Average Score: {data.averageScore}
 </h3>
 
-<p
-style={{
-fontSize:"18px",
-marginTop:"15px"
-}}
->
-{prediction}
+<h3>
+Top Performers: {data.topPerformers.length}
+</h3>
+
+<h3>
+Need Training: {data.trainingNeeded.length}
+</h3>
+
+<p>
+🤖 {data.recommendation}
 </p>
 
 </div>
-
-}
 
 </div>
 

@@ -1,8 +1,8 @@
 import Sidebar from "../components/Sidebar";
 
-function TestingMetrics(){
+function TestingMetrics() {
 
-const tests=[
+const tests = [
 
 {
 name:"API Connectivity",
@@ -16,7 +16,7 @@ status:"Passed"
 
 {
 name:"AI Prediction Accuracy",
-status:"100%"
+status:"92%"
 },
 
 {
@@ -27,6 +27,11 @@ status:"Passed"
 {
 name:"Performance Test",
 status:"Passed"
+},
+
+{
+name:"System Response Time",
+status:"1.2 sec"
 }
 
 ];
@@ -46,19 +51,15 @@ minHeight:"100vh"
 <div
 style={{
 padding:"30px",
-width:"100%"
+flex:1
 }}
 >
 
-<h1>
-Testing Metrics
-</h1>
+<h1>Testing Metrics</h1>
 
 <div style={{marginTop:"20px"}}>
 
-{
-
-tests.map((item,index)=>(
+{tests.map((item,index)=>(
 
 <div
 key={index}
@@ -76,9 +77,7 @@ borderRadius:"12px"
 
 </div>
 
-))
-
-}
+))}
 
 </div>
 

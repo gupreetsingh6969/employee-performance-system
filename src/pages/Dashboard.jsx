@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
+import { useNavigate } from "react-router-dom";
 
 import {
 BarChart,
@@ -13,6 +14,8 @@ ResponsiveContainer
 } from "recharts";
 
 function Dashboard(){
+
+const navigate=useNavigate();
 
 const [stats,setStats]=useState({
 totalEmployees:0,
@@ -30,47 +33,48 @@ const loadDashboard=async()=>{
 
 try{
 
-const response=
-await axios.get(
+const token=localStorage.getItem("token");
+
+if(!token){
+
+navigate("/");
+return;
+
+}
+
+const response=await axios.get(
 "http://localhost:5000/api/employees",
 {
 headers:{
-Authorization:
-`Bearer ${localStorage.getItem("token")}`
+Authorization:`Bearer ${token}`
 }
 }
 );
 
-const employees=
-response.data.data || [];
+const employees=response.data || [];
 
-const totalEmployees=
-employees.length;
+const totalEmployees=employees.length;
 
-const totalScore=
-employees.reduce(
-(sum,e)=>
-sum+Number(e.performanceScore||0),
+const totalScore=employees.reduce(
+(sum,employee)=>
+sum + Number(employee.performanceScore || 0),
 0
 );
 
 const averageScore=
 employees.length>0
-?
-(totalScore/employees.length).toFixed(1)
-:
-0;
+? (totalScore/employees.length).toFixed(1)
+:0;
 
 const highestScore=
 employees.length>0
-?
-Math.max(
+?Math.max(
 ...employees.map(
-e=>Number(e.performanceScore||0)
+employee=>
+Number(employee.performanceScore || 0)
 )
 )
-:
-0;
+:0;
 
 setStats({
 totalEmployees,
@@ -89,66 +93,54 @@ console.log(error);
 
 return(
 
-<div
-style={{
+<div style={{
 display:"flex",
 background:"#f3f4f6",
 minHeight:"100vh"
-}}
->
+}}>
 
 <Sidebar/>
 
-<div
-style={{
+<div style={{
 padding:"30px",
 width:"100%"
-}}
->
+}}>
 
 <h1>Employee Dashboard</h1>
 
-<div
-style={{
+<div style={{
 display:"flex",
 gap:"20px",
 marginTop:"30px",
 flexWrap:"wrap"
-}}
->
+}}>
 
-<div
-style={{
+<div style={{
 background:"white",
 padding:"20px",
 borderRadius:"12px",
 minWidth:"220px"
-}}
->
+}}>
 <h3>Total Employees</h3>
 <h2>{stats.totalEmployees}</h2>
 </div>
 
-<div
-style={{
+<div style={{
 background:"white",
 padding:"20px",
 borderRadius:"12px",
 minWidth:"220px"
-}}
->
+}}>
 <h3>Average Score</h3>
 <h2>{stats.averageScore}</h2>
 </div>
 
-<div
-style={{
+<div style={{
 background:"white",
 padding:"20px",
 borderRadius:"12px",
 minWidth:"220px"
-}}
->
+}}>
 <h3>Highest Score</h3>
 <h2>{stats.highestScore}</h2>
 </div>
@@ -159,21 +151,15 @@ minWidth:"220px"
 Performance Analytics
 </h2>
 
-<div
-style={{
+<div style={{
 background:"white",
 padding:"20px",
 borderRadius:"12px",
 height:"400px",
 marginTop:"20px"
-}}
->
+}}>
 
-<ResponsiveContainer
-width="100%"
-height="100%"
->
-
+<ResponsiveContainer width="100%" height="100%">
 <BarChart
 data={[
 {

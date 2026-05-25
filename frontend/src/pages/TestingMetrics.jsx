@@ -1,70 +1,127 @@
-function TestingMetrics() {
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-    const metrics = [
+function TestingMetrics(){
 
-        {
-            name:"AI Prediction Accuracy",
-            value:"92%"
-        },
+const [metrics,setMetrics]=useState([]);
 
-        {
-            name:"API Success Rate",
-            value:"99%"
-        },
+useEffect(()=>{
 
-        {
-            name:"Average Response Time",
-            value:"120ms"
-        },
+loadMetrics();
 
-        {
-            name:"Usability Score",
-            value:"9/10"
-        }
+},[]);
 
-    ];
+const loadMetrics=async()=>{
 
-    return (
+try{
 
-        <div style={{padding:"20px"}}>
+const token=localStorage.getItem("token");
 
-            <h1>
-                Testing Metrics
-            </h1>
+const response=await axios.get(
+"http://localhost:5000/api/employees",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
 
-            <br/>
+const employees=response.data || [];
 
-            {
+const totalEmployees=employees.length;
 
-                metrics.map((item,index)=>(
+const averageScore=
+employees.length>0
+?
+(
+employees.reduce(
+(sum,item)=>
+sum + item.performanceScore,
+0
+)
+/employees.length
+).toFixed(1)
+:
+0;
 
-                    <div
-                    key={index}
-                    style={{
-                        border:"1px solid #d1d5db",
-                        padding:"15px",
-                        marginBottom:"15px",
-                        borderRadius:"10px"
-                    }}
-                    >
+setMetrics([
 
-                        <h3>
-                            {item.name}
-                        </h3>
+{
+name:"Total Employees Tested",
+value:totalEmployees
+},
 
-                        <p>
-                            {item.value}
-                        </p>
+{
+name:"Average Performance Score",
+value:averageScore
+},
 
-                    </div>
+{
+name:"AI Prediction Accuracy",
+value:"92%"
+},
 
-                ))
+{
+name:"API Success Rate",
+value:"99%"
+},
 
-            }
+{
+name:"Average Response Time",
+value:"120ms"
+},
 
-        </div>
+{
+name:"Usability Score",
+value:"9/10"
+}
 
-    );
+]);
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+};
+
+return(
+
+<div style={{padding:"20px"}}>
+
+<h1>Testing Metrics</h1>
+
+<br/>
+
+{
+
+metrics.map((item,index)=>(
+
+<div
+key={index}
+style={{
+border:"1px solid #d1d5db",
+padding:"15px",
+marginBottom:"15px",
+borderRadius:"10px"
+}}
+>
+
+<h3>{item.name}</h3>
+
+<p>{item.value}</p>
+
+</div>
+
+))
+
+}
+
+</div>
+
+);
 
 }
 

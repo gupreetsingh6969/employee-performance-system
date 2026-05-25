@@ -3,21 +3,62 @@ import axios from "axios";
 
 function Notifications() {
 
-const [notificationList, setNotificationList] = useState([]);
+const [notificationList,setNotificationList]=useState([]);
 
-useEffect(() => {
+useEffect(()=>{
 
-const fetchNotifications = async () => {
+loadNotifications();
+
+},[]);
+
+const loadNotifications=async()=>{
 
 try{
 
-const response = await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/notifications"
+const token=localStorage.getItem("token");
+
+const response=await axios.get(
+"http://localhost:5000/api/employees",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
 );
 
-setNotificationList(
-response.data.notifications
-);
+const employees=response.data || [];
+
+const notifications=[];
+
+employees.forEach((employee)=>{
+
+if(employee.performanceScore<60){
+
+notifications.push({
+
+id:employee.id,
+message:`${employee.name} needs training`,
+time:"Today"
+
+});
+
+}
+
+if(employee.feedback){
+
+notifications.push({
+
+id:`feedback-${employee.id}`,
+message:`Feedback updated for ${employee.name}`,
+time:"Today"
+
+});
+
+}
+
+});
+
+setNotificationList(notifications);
 
 }
 catch(error){
@@ -28,21 +69,19 @@ console.log(error);
 
 };
 
-fetchNotifications();
-
-}, []);
-
 return(
 
 <div style={{padding:"20px"}}>
 
-<h1>
-Notifications
-</h1>
+<h1>Notifications</h1>
 
 <br/>
 
-{
+{notificationList.length===0 ? (
+
+<h3>No Notifications</h3>
+
+) : (
 
 notificationList.map((item)=>(
 
@@ -57,19 +96,15 @@ background:"#f9fafb"
 }}
 >
 
-<h3>
-{item.message}
-</h3>
+<h3>{item.message}</h3>
 
-<p>
-Time: {item.time}
-</p>
+<p>Time: {item.time}</p>
 
 </div>
 
 ))
 
-}
+)}
 
 </div>
 

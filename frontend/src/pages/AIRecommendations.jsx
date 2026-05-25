@@ -3,58 +3,105 @@ import axios from "axios";
 
 function AIRecommendations() {
 
-    const [prediction, setPrediction] = useState("");
+const [data,setData]=useState(null);
 
-    useEffect(() => {
+useEffect(()=>{
 
-        const fetchPrediction = async () => {
+loadRecommendations();
 
-            try {
+},[]);
 
-                const response = await axios.get(
-                    "https://employee-performance-system-production-2fc6.up.railway.app/api/predict"
-                );
+const loadRecommendations=async()=>{
 
-                setPrediction(
-                    response.data.prediction
-                );
+try{
 
-            } catch (error) {
-                console.log(error);
-            }
+const token=localStorage.getItem("token");
 
-        };
+const response=await axios.get(
+"http://localhost:5000/api/ai",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
 
-        fetchPrediction();
+setData(response.data);
 
-    }, []);
+}
+catch(error){
 
-    return (
+console.log(error);
 
-        <div style={{padding:"20px"}}>
+}
 
-            <h1>AI Recommendations</h1>
+};
 
-            <div
-                style={{
-                    border:"1px solid #ccc",
-                    padding:"20px",
-                    borderRadius:"10px"
-                }}
-            >
-                <pre
-                    style={{
-                        whiteSpace:"pre-wrap",
-                        fontSize:"18px"
-                    }}
-                >
-                    {prediction}
-                </pre>
-            </div>
+return(
 
-        </div>
+<div style={{padding:"20px"}}>
 
-    );
+<h1>AI Recommendations</h1>
+
+{data && (
+
+<>
+
+<div
+style={{
+border:"1px solid #ccc",
+padding:"20px",
+borderRadius:"10px",
+marginBottom:"20px"
+}}
+>
+
+<h3>
+Average Score: {data.averageScore}
+</h3>
+
+<p>
+Recommendation:
+{data.recommendation}
+</p>
+
+</div>
+
+<h3>Top Performers</h3>
+
+<ul>
+{data.topPerformers.map((employee)=>(
+
+<li key={employee.id}>
+{employee.name}
+- Score:
+{employee.performanceScore}
+</li>
+
+))}
+</ul>
+
+<h3>Training Needed</h3>
+
+<ul>
+{data.trainingNeeded.map((employee)=>(
+
+<li key={employee.id}>
+{employee.name}
+- Score:
+{employee.performanceScore}
+</li>
+
+))}
+</ul>
+
+</>
+
+)}
+
+</div>
+
+);
 
 }
 
