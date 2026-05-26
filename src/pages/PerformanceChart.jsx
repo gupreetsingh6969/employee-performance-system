@@ -108,3 +108,4 @@ Performance Chart
 }
 
 export default PerformanceChart;
+

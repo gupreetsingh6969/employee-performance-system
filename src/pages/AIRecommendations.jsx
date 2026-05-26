@@ -100,3 +100,4 @@ Need Training: {data.trainingNeeded.length}
 }
 
 export default AIRecommendations;
+
