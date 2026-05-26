@@ -28,7 +28,12 @@ const [chartData,setChartData]=useState({
 
 labels:[],
 datasets:[]
+
 });
+
+const API_URL=
+import.meta.env.VITE_API_URL ||
+"http://localhost:5000";
 
 useEffect(()=>{
 
@@ -40,12 +45,35 @@ const loadChartData=async()=>{
 
 try{
 
-const response=await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
+const token=
+localStorage.getItem("token");
+
+if(!token){
+
+console.log(
+"No token found"
+);
+
+return;
+
+}
+
+const response=
+await axios.get(
+
+`${API_URL}/api/employees`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+
 );
 
 const employees=
-response.data.data;
+response.data.data ||
+response.data ||
+[];
 
 setChartData({
 
@@ -57,12 +85,23 @@ employee=>employee.name
 datasets:[
 
 {
+
 label:"Performance Score",
 
 data:
 employees.map(
-employee=>employee.performanceScore
-)
+employee=>
+employee.performanceScore
+),
+
+backgroundColor:[
+"#2563eb",
+"#22c55e",
+"#f59e0b",
+"#ef4444",
+"#8b5cf6"
+]
+
 }
 
 ]
@@ -72,7 +111,14 @@ employee=>employee.performanceScore
 }
 catch(error){
 
-console.log(error);
+console.log(
+
+"Charts Error:",
+
+error.response?.data ||
+error.message
+
+);
 
 }
 
@@ -83,13 +129,17 @@ return(
 <div style={{padding:"20px"}}>
 
 <h1>
+
 Performance Analytics
+
 </h1>
 
 <div
 style={{
+
 width:"900px",
 marginTop:"30px"
+
 }}
 >
 

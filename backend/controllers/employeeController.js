@@ -4,124 +4,206 @@ const prisma = new PrismaClient();
 
 
 // Get all employees
-export const getEmployees = async (req, res) => {
-  try {
 
-    const employees = await prisma.employee.findMany();
+export const getEmployees = async(req,res)=>{
 
-    res.status(200).json({
-      success: true,
-      count: employees.length,
-      data: employees
-    });
+try{
 
-  } catch (error) {
+const employees=
+await prisma.employee.findMany({
 
-    console.log("Get Employees Error:", error);
+include:{
+tasks:true,
+performances:true
+}
 
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+});
 
-  }
+res.status(200).json({
+
+success:true,
+count:employees.length,
+data:employees
+
+});
+
+}
+catch(error){
+
+console.log(
+"Get Employee Error:",
+error
+);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
 };
 
 
-// Add employee
-export const createEmployee = async (req, res) => {
-  try {
+// Create employee
 
-    const employee = await prisma.employee.create({
-      data: {
-        name: req.body.name,
-        email: req.body.email,
-        department: req.body.department,
-        position: req.body.position,
-        performanceScore: Number(req.body.performanceScore),
-        feedback: req.body.feedback,
-        achievements: req.body.achievements
-      }
-    });
+export const createEmployee = async(req,res)=>{
 
-    res.status(201).json({
-      success: true,
-      data: employee
-    });
+try{
 
-  } catch (error) {
+const employee=
+await prisma.employee.create({
 
-    console.log("Create Employee Error:", error);
+data:{
 
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+name:
+req.body.name || "",
 
-  }
+email:
+req.body.email || "",
+
+department:
+req.body.department || "General",
+
+position:
+req.body.position || "Employee",
+
+performanceScore:
+Number(
+req.body.performanceScore || 0
+)
+
+}
+
+});
+
+res.status(201).json({
+
+success:true,
+message:"Employee Added Successfully",
+data:employee
+
+});
+
+}
+catch(error){
+
+console.log(
+"Create Employee Error:",
+error
+);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
 };
 
 
 // Update employee
-export const updateEmployee = async (req, res) => {
-  try {
 
-    const employee = await prisma.employee.update({
-      where: {
-        id: Number(req.params.id)
-      },
-      data: {
-        name: req.body.name,
-        email: req.body.email,
-        department: req.body.department,
-        position: req.body.position,
-        performanceScore: Number(req.body.performanceScore),
-        feedback: req.body.feedback,
-        achievements: req.body.achievements
-      }
-    });
+export const updateEmployee=async(req,res)=>{
 
-    res.status(200).json({
-      success: true,
-      data: employee
-    });
+try{
 
-  } catch (error) {
+const employee=
+await prisma.employee.update({
 
-    console.log("Update Employee Error:", error);
+where:{
+id:Number(req.params.id)
+},
 
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+data:{
 
-  }
+name:req.body.name,
+
+email:req.body.email,
+
+department:
+req.body.department,
+
+position:
+req.body.position,
+
+performanceScore:
+Number(
+req.body.performanceScore || 0
+)
+
+}
+
+});
+
+res.status(200).json({
+
+success:true,
+data:employee
+
+});
+
+}
+catch(error){
+
+console.log(
+"Update Employee Error:",
+error
+);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
 };
 
 
 // Delete employee
-export const deleteEmployee = async (req, res) => {
-  try {
 
-    await prisma.employee.delete({
-      where: {
-        id: Number(req.params.id)
-      }
-    });
+export const deleteEmployee=async(req,res)=>{
 
-    res.status(200).json({
-      success: true,
-      message: "Employee deleted"
-    });
+try{
 
-  } catch (error) {
+await prisma.employee.delete({
 
-    console.log("Delete Employee Error:", error);
+where:{
+id:Number(req.params.id)
+}
 
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+});
 
-  }
+res.status(200).json({
+
+success:true,
+message:"Employee Deleted"
+
+});
+
+}
+catch(error){
+
+console.log(
+"Delete Employee Error:",
+error
+);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
 };

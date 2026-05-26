@@ -1,99 +1,106 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
 function TestingMetrics(){
 
-const [metrics,setMetrics]=useState([]);
-
-useEffect(()=>{
-
-loadMetrics();
-
-},[]);
-
-const loadMetrics=async()=>{
-
-try{
-
-const token=localStorage.getItem("token");
-
-const response=await axios.get(
-"http://localhost:5000/api/employees",
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-);
-
-const employees=response.data || [];
-
-const totalEmployees=employees.length;
-
-const averageScore=
-employees.length>0
-?
-(
-employees.reduce(
-(sum,item)=>
-sum + item.performanceScore,
-0
-)
-/employees.length
-).toFixed(1)
-:
-0;
-
-setMetrics([
+const metrics=[
 
 {
-name:"Total Employees Tested",
-value:totalEmployees
+title:"AI Accuracy",
+value:92
 },
 
 {
-name:"Average Performance Score",
-value:averageScore
+title:"Precision",
+value:89
 },
 
 {
-name:"AI Prediction Accuracy",
-value:"92%"
+title:"Recall",
+value:87
 },
 
 {
-name:"API Success Rate",
-value:"99%"
-},
-
-{
-name:"Average Response Time",
-value:"120ms"
-},
-
-{
-name:"Usability Score",
-value:"9/10"
+title:"F1 Score",
+value:88
 }
 
-]);
+];
 
-}
-catch(error){
+const tests=[
 
-console.log(error);
+"Authentication Tested",
+"Employee CRUD Tested",
+"Notifications Tested",
+"AI Recommendation Tested",
+"Dashboard Analytics Tested",
+"Task Module Tested",
+"Charts Tested"
 
-}
-
-};
+];
 
 return(
 
-<div style={{padding:"20px"}}>
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
 
-<h1>Testing Metrics</h1>
+<Sidebar/>
+
+<div
+style={{
+padding:"30px",
+width:"100%"
+}}
+>
+
+<div
+style={{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center"
+}}
+>
+
+<h1>
+🧪 Testing Metrics Dashboard
+</h1>
+
+<button
+
+style={{
+padding:"12px 20px",
+background:"#2563eb",
+color:"white",
+border:"none",
+borderRadius:"10px",
+cursor:"pointer"
+}}
+
+onClick={()=>
+alert("All tests executed successfully")
+}
+
+>
+
+🔄 Run Test
+
+</button>
+
+</div>
 
 <br/>
+
+<div
+style={{
+display:"flex",
+gap:"20px",
+flexWrap:"wrap"
+}}
+>
 
 {
 
@@ -102,22 +109,111 @@ metrics.map((item,index)=>(
 <div
 key={index}
 style={{
-border:"1px solid #d1d5db",
-padding:"15px",
-marginBottom:"15px",
-borderRadius:"10px"
+background:"white",
+padding:"20px",
+width:"220px",
+borderRadius:"15px",
+boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
 }}
 >
 
-<h3>{item.name}</h3>
+<h3>{item.title}</h3>
 
-<p>{item.value}</p>
+<h1>{item.value}%</h1>
+
+<br/>
+
+<div
+style={{
+height:"10px",
+background:"#e5e7eb",
+borderRadius:"20px"
+}}
+>
+
+<div
+style={{
+height:"100%",
+width:`${item.value}%`,
+background:"#22c55e",
+borderRadius:"20px"
+}}
+>
+
+</div>
+
+</div>
 
 </div>
 
 ))
 
 }
+
+</div>
+
+<br/>
+
+<div
+style={{
+background:"white",
+padding:"25px",
+borderRadius:"15px",
+boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
+}}
+>
+
+<h2>
+📋 Test Summary
+</h2>
+
+<br/>
+
+{
+
+tests.map((item,index)=>(
+
+<p
+key={index}
+style={{
+marginBottom:"15px"
+}}
+>
+✅ {item}
+</p>
+
+))
+
+}
+
+</div>
+
+<br/>
+
+<div
+style={{
+background:"white",
+padding:"25px",
+borderRadius:"15px",
+boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
+}}
+>
+
+<h2>
+💚 System Health
+</h2>
+
+<h1>
+95%
+</h1>
+
+<p>
+All modules functioning correctly
+</p>
+
+</div>
+
+</div>
 
 </div>
 

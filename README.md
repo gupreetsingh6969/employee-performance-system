@@ -2,49 +2,60 @@
 
 ## Project Overview
 
-Employee Performance System is a web application designed to track employee performance metrics, analyze trends, and provide AI-based recommendations for improving productivity and training programs.
+Employee Performance System is a full-stack web application designed to manage employees, track performance metrics, analyze trends, and provide AI-driven recommendations.
 
-The system enables managers and HR teams to monitor employee performance, feedback, achievements, and analytics through an interactive dashboard.
+The system allows HR teams and managers to monitor employee activities, manage tasks, generate reports, collect feedback, and visualize performance analytics using an interactive dashboard.
 
 ---
 
 ## Features
 
 ### Authentication & Access Control
-- Secure JWT Login System
-- Role-based access (Admin / HR / Manager / Employee)
+- Secure JWT Authentication
+- Role-based access (HR / Manager / Employee)
 - Protected routes
 
 ### Employee Management
 - Add Employee
 - Edit Employee
 - Delete Employee
-- Performance metrics
-- Feedback management
-- Achievement tracking
+- Employee profile management
+
+### Task Management
+- Assign tasks
+- Update task status
+- Track completion
+
+### Feedback System
+- Add employee feedback
+- Rating system
+- Feedback history
 
 ### AI Recommendation Module
 - Performance score analysis
-- Top performer identification
-- Training need analysis
-- AI-based recommendations
+- Top performer detection
+- Training recommendations
+- Risk employee identification
 
 ### Analytics Dashboard
-- Total employee analytics
-- Top performer analytics
-- Average performance score
-- Performance trends visualization
+- Employee statistics
+- Performance trends
+- Charts and graphs
+- Task analytics
+
+### Reports
+- CSV Export
+- PDF Export
+- Excel Export
 
 ### Notifications
-- Evaluation deadline reminders
-- Feedback update notifications
-- Training notifications
+- Activity notifications
+- Reminder notifications
 
 ### Testing & Metrics
 - API testing
 - Authentication testing
-- AI prediction testing
-- System response metrics
+- Performance monitoring
 
 ---
 
@@ -55,6 +66,7 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - Vite
 - Axios
 - React Router DOM
+- Recharts
 
 ### Backend
 - Node.js
@@ -68,6 +80,9 @@ The system enables managers and HR teams to monitor employee performance, feedba
 - JWT
 - bcryptjs
 
+### Deployment
+- Railway
+
 ---
 
 ## Installation
@@ -78,76 +93,3 @@ The system enables managers and HR teams to monitor employee performance, feedba
 cd backend
 npm install
 npm run dev
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## Environment Variables
-
-Backend `.env`
-
-```env
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-PORT=5000
-```
-
----
-
-## System Architecture
-
-```text
-Frontend (React + Vite)
-        ↓
-Backend API (Node.js + Express)
-        ↓
-Authentication Middleware
-        ↓
-Controllers
-        ↓
-Prisma ORM
-        ↓
-PostgreSQL Database
-        ↓
-AI Recommendation Engine
-```
-
----
-
-## API Endpoints
-
-### Authentication
-- POST /api/auth/register
-- POST /api/auth/login
-
-### Employees
-- GET /api/employees
-- POST /api/employees
-- PUT /api/employees/:id
-- DELETE /api/employees/:id
-
-### AI
-- GET /api/ai
-
-### Notifications
-- GET /api/notifications
-
----
-
-## Usage
-
-1. Register user
-2. Login using credentials
-3. Access dashboard
-4. Add employee records
-5. View analytics
-6. Check AI recommendations
-7. Receive notifications

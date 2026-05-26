@@ -15,51 +15,119 @@ enum Role {
 }
 
 model User {
-  id           Int @id @default(autoincrement())
-  name         String
-  email        String @unique
-  password     String
-  role         Role @default(EMPLOYEE)
-  createdAt    DateTime @default(now())
 
-  performances Performance[]
-  tasks        Task[]
+  id Int @id @default(autoincrement())
+
+  name String
+
+  email String @unique
+
+  password String
+
+  role Role @default(EMPLOYEE)
+
+  createdAt DateTime @default(now())
+
 }
 
 model Employee {
-  id                 Int @id @default(autoincrement())
-  name               String
-  email              String @unique
-  department         String
-  position           String
-  performanceScore   Int
-  feedback           String?
-  achievements       String?
-  createdAt          DateTime @default(now())
+
+  id Int @id @default(autoincrement())
+
+  name String
+
+  email String @unique
+
+  department String
+
+  position String
+
+  performanceScore Int
+
+  createdAt DateTime @default(now())
+
+  tasks Task[]
+
+  performances Performance[]
+
+  feedbacks Feedback[]
+
+  achievements Achievement[]
+
 }
 
 model Performance {
-  id          Int @id @default(autoincrement())
-  employeeId  Int
-  rating      Int
-  kpi         String
-  review      String
-  reviewDate  DateTime @default(now())
 
-  employee User @relation(fields: [employeeId], references: [id])
+  id Int @id @default(autoincrement())
+
+  employeeId Int
+
+  rating Int
+
+  kpi String
+
+  review String
+
+  reviewDate DateTime @default(now())
+
+  employee Employee @relation(fields:[employeeId], references:[id])
 
   createdAt DateTime @default(now())
+
 }
 
 model Task {
-  id          Int @id @default(autoincrement())
-  title       String
-  description String
-  status      String @default("Pending")
-  deadline    DateTime
+
+  id Int @id @default(autoincrement())
+
+  title String
+
+  description String?
+
+  status String @default("Pending")
+
+  deadline DateTime
+
+  priority String @default("Medium")
+
+  completedAt DateTime?
 
   employeeId Int
-  employee User @relation(fields: [employeeId], references: [id])
+
+  employee Employee @relation(fields:[employeeId], references:[id])
 
   createdAt DateTime @default(now())
+
+}
+
+model Feedback {
+
+  id Int @id @default(autoincrement())
+
+  employeeId Int
+
+  employee Employee @relation(fields:[employeeId], references:[id])
+
+  comment String
+
+  rating Int
+
+  createdAt DateTime @default(now())
+
+}
+
+model Achievement {
+
+  id Int @id @default(autoincrement())
+
+  employeeId Int
+
+  employee Employee @relation(fields:[employeeId], references:[id])
+
+  title String
+
+  description String
+
+  createdAt DateTime @default(now())
+
 }

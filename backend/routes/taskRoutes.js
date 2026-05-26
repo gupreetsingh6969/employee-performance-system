@@ -1,57 +1,55 @@
 import express from "express";
 
 import {
-
-getEmployees,
-createEmployee,
-updateEmployee,
-deleteEmployee
-
-} from "../controllers/employeeController.js";
+getTasks,
+createTask,
+updateTaskStatus
+} from "../controllers/taskController.js";
 
 import verifyToken from "../middleware/authMiddleware.js";
+
 import { authorize } from "../middleware/roleMiddleware.js";
 
-const router = express.Router();
+const router=express.Router();
+
+
+// Get tasks
 
 router.get(
 "/",
 verifyToken,
 authorize(
 "HR",
-"Manager",
-"Employee"
+"MANAGER",
+"EMPLOYEE"
 ),
-getEmployees
+getTasks
 );
+
+
+// Create task
 
 router.post(
 "/",
 verifyToken,
 authorize(
 "HR",
-"Manager"
+"MANAGER"
 ),
-createEmployee
+createTask
 );
+
+
+// Update task status
 
 router.put(
 "/:id",
 verifyToken,
 authorize(
 "HR",
-"Manager"
+"MANAGER"
 ),
-updateEmployee
-);
-
-router.delete(
-"/:id",
-verifyToken,
-authorize(
-"HR"
-),
-deleteEmployee
+updateTaskStatus
 );
 
 export default router;

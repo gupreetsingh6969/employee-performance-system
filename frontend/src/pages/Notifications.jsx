@@ -1,64 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import axios from "axios";
 
-function Notifications() {
+function Notifications(){
 
-const [notificationList,setNotificationList]=useState([]);
+const [notificationList,setNotificationList]=
+useState([]);
+
+const [loading,setLoading]=
+useState(false);
+
 
 useEffect(()=>{
 
 loadNotifications();
 
+const interval=
+setInterval(
+loadNotifications,
+10000
+);
+
+return()=>clearInterval(interval);
+
 },[]);
+
+
 
 const loadNotifications=async()=>{
 
 try{
 
-const token=localStorage.getItem("token");
+setLoading(true);
 
-const response=await axios.get(
-"http://localhost:5000/api/employees",
+const token=
+localStorage.getItem("token");
+
+const response=
+await axios.get(
+
+"http://localhost:5000/api/notifications",
+
 {
 headers:{
 Authorization:`Bearer ${token}`
 }
 }
+
 );
 
-const employees=response.data || [];
+const data=
+(response.data.data || []).map(
+(item,index)=>({
 
-const notifications=[];
+...item,
+id:index,
+read:false,
+time:new Date().toLocaleTimeString()
 
-employees.forEach((employee)=>{
+})
+);
 
-if(employee.performanceScore<60){
-
-notifications.push({
-
-id:employee.id,
-message:`${employee.name} needs training`,
-time:"Today"
-
-});
-
-}
-
-if(employee.feedback){
-
-notifications.push({
-
-id:`feedback-${employee.id}`,
-message:`Feedback updated for ${employee.name}`,
-time:"Today"
-
-});
-
-}
-
-});
-
-setNotificationList(notifications);
+setNotificationList(data);
 
 }
 catch(error){
@@ -66,50 +68,321 @@ catch(error){
 console.log(error);
 
 }
+finally{
+
+setLoading(false);
+
+}
 
 };
 
+
+const markRead=(id)=>{
+
+setNotificationList(
+
+notificationList.map(item=>
+
+item.id===id
+
+?
+
+{
+...item,
+read:true
+}
+
+:
+
+item
+
+)
+
+);
+
+};
+
+
+const markAllRead=()=>{
+
+setNotificationList(
+
+notificationList.map(item=>({
+
+...item,
+read:true
+
+}))
+
+);
+
+};
+
+
+const clearAll=()=>{
+
+setNotificationList([]);
+
+};
+
+
+const unread=
+
+notificationList.filter(
+n=>!n.read
+).length;
+
+
 return(
 
-<div style={{padding:"20px"}}>
-
-<h1>Notifications</h1>
-
-<br/>
-
-{notificationList.length===0 ? (
-
-<h3>No Notifications</h3>
-
-) : (
-
-notificationList.map((item)=>(
-
 <div
-key={item.id}
 style={{
-border:"1px solid #d1d5db",
-padding:"15px",
-marginBottom:"15px",
-borderRadius:"10px",
-background:"#f9fafb"
+padding:"30px",
+background:"#f3f4f6",
+minHeight:"100vh"
 }}
 >
 
-<h3>{item.message}</h3>
+<div
+style={{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center"
+}}
+>
 
-<p>Time: {item.time}</p>
+<h1>
+
+🔔 Notifications
+
+<span
+style={{
+fontSize:"18px",
+color:"#ef4444"
+}}
+>
+
+({unread} unread)
+
+</span>
+
+</h1>
+
+
+<div
+style={{
+display:"flex",
+gap:"10px"
+}}
+>
+
+<button
+onClick={loadNotifications}
+style={buttonStyle}
+>
+
+{
+loading
+?
+"Loading..."
+:
+"Refresh"
+}
+
+</button>
+
+
+<button
+onClick={markAllRead}
+style={{
+...buttonStyle,
+background:"#22c55e"
+}}
+>
+
+Mark All Read
+
+</button>
+
+
+<button
+onClick={clearAll}
+style={{
+...buttonStyle,
+background:"#ef4444"
+}}
+>
+
+Clear All
+
+</button>
+
+</div>
+
+</div>
+
+
+<br/>
+
+
+<div
+style={{
+display:"flex",
+gap:"20px",
+marginBottom:"20px"
+}}
+>
+
+<div style={cardStyle}>
+Total
+<h2>
+{notificationList.length}
+</h2>
+</div>
+
+
+<div style={cardStyle}>
+Unread
+<h2>
+{unread}
+</h2>
+</div>
+
+
+<div style={cardStyle}>
+Read
+<h2>
+{
+notificationList.length-unread
+}
+</h2>
+</div>
+
+</div>
+
+
+
+{
+
+notificationList.map(item=>(
+
+<div
+
+key={item.id}
+
+style={{
+
+background:
+item.read
+?
+"#e5e7eb"
+:
+"white",
+
+padding:"20px",
+
+marginBottom:"15px",
+
+borderRadius:"15px",
+
+borderLeft:
+
+item.message
+.toLowerCase()
+.includes("overdue")
+
+?
+
+"6px solid red"
+
+:
+
+item.message
+.toLowerCase()
+.includes("completed")
+
+?
+
+"6px solid green"
+
+:
+
+"6px solid #2563eb",
+
+boxShadow:
+"0px 4px 12px rgba(0,0,0,0.1)",
+
+cursor:"pointer"
+
+}}
+
+onClick={()=>
+markRead(item.id)
+}
+
+>
+
+<h3>
+
+{
+item.read
+?
+"✓"
+:
+"🔔"
+}
+
+{" "}
+
+{item.message}
+
+</h3>
+
+
+<p
+style={{
+color:"gray"
+}}
+>
+
+🕒 {item.time}
+
+</p>
 
 </div>
 
 ))
 
-)}
+}
 
 </div>
 
 );
 
 }
+
+
+const buttonStyle={
+
+padding:"10px 15px",
+border:"none",
+borderRadius:"10px",
+background:"#2563eb",
+color:"white",
+cursor:"pointer"
+
+};
+
+
+const cardStyle={
+
+background:"white",
+padding:"15px",
+width:"180px",
+borderRadius:"15px",
+boxShadow:"0px 4px 10px rgba(0,0,0,0.1)"
+
+};
+
 
 export default Notifications;

@@ -4,44 +4,99 @@ import axios from "axios";
 function EmployeeList(){
 
 const [employees,setEmployees]=useState([]);
+const [loading,setLoading]=useState(true);
+
 const [search,setSearch]=useState("");
 
-const fetchEmployees=async()=>{
+const [editing,setEditing]=useState(null);
 
-try{
+const [formData,setFormData]=useState({
 
-const response=await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
-);
+name:"",
+email:"",
+department:"",
+position:"",
+performanceScore:0
 
-setEmployees(
-response.data.data
-);
+});
 
-}
-catch(error){
-
-console.log(error);
-
-}
-
-};
 
 useEffect(()=>{
 
-fetchEmployees();
+loadEmployees();
 
 },[]);
 
-const deleteEmployee=async(id)=>{
+
+const loadEmployees=async()=>{
 
 try{
 
-await axios.delete(
-`https://employee-performance-system-production-2fc6.up.railway.app/api/employees/${id}`
+setLoading(true);
+
+const token=
+localStorage.getItem("token");
+
+const response=
+await axios.get(
+
+"http://localhost:5000/api/employees",
+
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+
 );
 
-fetchEmployees();
+setEmployees(
+response.data.data || []
+);
+
+}
+catch(error){
+
+console.log(error);
+
+}
+finally{
+
+setLoading(false);
+
+}
+
+};
+
+
+
+const deleteEmployee=async(id)=>{
+
+const confirmDelete=
+window.confirm(
+"Delete employee?"
+);
+
+if(!confirmDelete) return;
+
+try{
+
+const token=
+localStorage.getItem("token");
+
+await axios.delete(
+
+`http://localhost:5000/api/employees/${id}`,
+
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+
+);
+
+loadEmployees();
 
 }
 catch(error){
@@ -52,32 +107,150 @@ console.log(error);
 
 };
 
-const filteredEmployees=
 
-employees.filter((employee)=>
 
-employee.name.toLowerCase().includes(
-search.toLowerCase()
-)
+const updateEmployee=async()=>{
 
-||
+try{
 
-employee.department.toLowerCase().includes(
-search.toLowerCase()
-)
+const token=
+localStorage.getItem("token");
+
+await axios.put(
+
+`http://localhost:5000/api/employees/${editing}`,
+
+formData,
+
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
 
 );
 
+setEditing(null);
+
+loadEmployees();
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+};
+
+
+
+const filteredEmployees=
+
+employees
+.filter((e)=>
+
+e.name.toLowerCase().includes(search.toLowerCase()) ||
+
+e.email.toLowerCase().includes(search.toLowerCase()) ||
+
+e.department.toLowerCase().includes(search.toLowerCase())
+
+)
+
+.sort(
+(a,b)=>
+b.performanceScore-a.performanceScore
+);
+
+
+
 return(
 
-<div style={{padding:"20px"}}>
+<div
+style={{
+padding:"30px",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
 
-<h1>Employee List</h1>
+<h1>
+👨‍💼 Employee Management
+</h1>
+
+<br/>
+
+
+<div
+style={{
+
+display:"grid",
+gridTemplateColumns:"repeat(3,1fr)",
+gap:"20px"
+
+}}
+>
+
+<div style={card}>
+<h3>Total Employees</h3>
+<h1>{employees.length}</h1>
+</div>
+
+<div style={card}>
+<h3>Top Performers</h3>
+<h1>
+
+{
+employees.filter(
+e=>e.performanceScore>=80
+).length
+}
+
+</h1>
+
+</div>
+
+<div style={card}>
+<h3>Average Score</h3>
+
+<h1>
+
+{
+
+employees.length>0 ?
+
+Math.round(
+
+employees.reduce(
+(sum,e)=>
+
+sum+e.performanceScore,
+
+0
+
+)/employees.length
+
+)
+
+:
+
+0
+
+}
+
+</h1>
+
+</div>
+
+</div>
+
+<br/>
+
 
 <input
 
-type="text"
-placeholder="Search by Name or Department"
+placeholder="Search employee..."
 
 value={search}
 
@@ -87,77 +260,314 @@ setSearch(e.target.value)
 
 style={{
 
-padding:"8px",
-marginBottom:"20px",
-width:"250px"
+width:"400px",
+padding:"12px",
+borderRadius:"10px",
+border:"1px solid lightgray"
 
 }}
 
 />
 
-<table border="1" cellPadding="10">
 
-<thead>
+<br/><br/>
 
-<tr>
 
-<th>Name</th>
-<th>Email</th>
-<th>Department</th>
-<th>Position</th>
-<th>Score</th>
-<th>Action</th>
+{
 
-</tr>
+loading ?
 
-</thead>
+<h2>Loading...</h2>
 
-<tbody>
+:
+
+filteredEmployees.length===0 ?
+
+<h2>No employees found</h2>
+
+:
+
+<div
+
+style={{
+
+display:"grid",
+
+gridTemplateColumns:
+"repeat(auto-fill,minmax(300px,1fr))",
+
+gap:"20px"
+
+}}
+
+>
 
 {
 
 filteredEmployees.map((employee)=>(
 
-<tr key={employee._id}>
+<div
 
-<td>{employee.name}</td>
-<td>{employee.email}</td>
-<td>{employee.department}</td>
-<td>{employee.position}</td>
-<td>{employee.performanceScore}</td>
+key={employee.id}
 
-<td>
+style={{
 
-<button>
-Edit
-</button>
+background:"white",
 
-{" "}
+padding:"20px",
+
+borderRadius:"15px",
+
+boxShadow:
+"0 4px 10px rgba(0,0,0,0.2)"
+
+}}
+
+>
+
+<h2>{employee.name}</h2>
+
+<p>📧 {employee.email}</p>
+
+<p>🏢 {employee.department}</p>
+
+<p>💼 {employee.position}</p>
+
+<p>
+⭐ {employee.performanceScore}
+</p>
+
+
+<p>
+
+{
+
+employee.performanceScore>=80
+
+?
+
+"🟢 Excellent"
+
+:
+
+employee.performanceScore>=50
+
+?
+
+"🟡 Average"
+
+:
+
+"🔴 Needs Improvement"
+
+}
+
+</p>
+
+<br/>
 
 <button
-onClick={()=>
-deleteEmployee(employee._id)
-}
+
+onClick={()=>{
+
+setEditing(employee.id);
+
+setFormData(employee);
+
+}}
+
+style={editBtn}
+
 >
-Delete
+
+Edit
+
 </button>
 
-</td>
 
-</tr>
+<button
+
+onClick={()=>
+deleteEmployee(employee.id)
+}
+
+style={deleteBtn}
+
+>
+
+Delete
+
+</button>
+
+</div>
 
 ))
 
 }
 
-</tbody>
+</div>
 
-</table>
-cd ..
+}
+
+
+{
+
+editing &&
+
+<div style={overlay}>
+
+<div style={modal}>
+
+<h2>Edit Employee</h2>
+
+<br/>
+
+<input
+value={formData.name}
+placeholder="Name"
+onChange={(e)=>
+setFormData({
+...formData,
+name:e.target.value
+})
+}
+/>
+
+<br/><br/>
+
+<input
+value={formData.email}
+placeholder="Email"
+onChange={(e)=>
+setFormData({
+...formData,
+email:e.target.value
+})
+}
+/>
+
+<br/><br/>
+
+<input
+value={formData.department}
+placeholder="Department"
+onChange={(e)=>
+setFormData({
+...formData,
+department:e.target.value
+})
+}
+/>
+
+<br/><br/>
+
+<input
+value={formData.position}
+placeholder="Position"
+onChange={(e)=>
+setFormData({
+...formData,
+position:e.target.value
+})
+}
+/>
+
+<br/><br/>
+
+<input
+type="number"
+value={formData.performanceScore}
+placeholder="Score"
+onChange={(e)=>
+setFormData({
+...formData,
+performanceScore:e.target.value
+})
+}
+/>
+
+<br/><br/>
+
+<button
+onClick={updateEmployee}
+style={editBtn}
+>
+Save
+</button>
+
+<button
+onClick={()=>
+setEditing(null)
+}
+style={deleteBtn}
+>
+Cancel
+</button>
+
+</div>
+
+</div>
+
+}
+
 </div>
 
 );
 
 }
+
+
+const card={
+
+background:"white",
+padding:"20px",
+borderRadius:"15px",
+boxShadow:"0 3px 8px gray"
+
+};
+
+const editBtn={
+
+padding:"10px",
+background:"#2563eb",
+border:"none",
+color:"white",
+borderRadius:"8px",
+marginRight:"10px"
+
+};
+
+const deleteBtn={
+
+padding:"10px",
+background:"#ef4444",
+border:"none",
+color:"white",
+borderRadius:"8px"
+
+};
+
+const overlay={
+
+position:"fixed",
+top:0,
+left:0,
+right:0,
+bottom:0,
+background:"rgba(0,0,0,0.5)",
+display:"flex",
+justifyContent:"center",
+alignItems:"center"
+
+};
+
+const modal={
+
+background:"white",
+padding:"30px",
+borderRadius:"15px",
+width:"400px"
+
+};
 
 export default EmployeeList;

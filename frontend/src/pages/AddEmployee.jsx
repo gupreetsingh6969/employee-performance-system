@@ -1,95 +1,60 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 
-function AddEmployee() {
+function AddEmployee(){
 
-const [searchParams] = useSearchParams();
+const [employee,setEmployee]=useState({
 
-const employeeId = searchParams.get("id");
-
-const [employee, setEmployee] = useState({
 name:"",
 email:"",
+performanceScore:"",
 department:"",
-position:"",
-performanceScore:""
+role:""
+
 });
 
-const handleChange=(e)=>{
-
-setEmployee({
-...employee,
-[e.target.name]:e.target.value
-});
-
-};
-
-useEffect(()=>{
-
-if(employeeId){
-loadEmployee();
-}
-
-},[]);
-
-const loadEmployee=async()=>{
+const addEmployee=async()=>{
 
 try{
 
-const response=await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
-);
-
-const selectedEmployee =
-response.data.data.find(
-(emp)=>emp._id===employeeId
-);
-
-if(selectedEmployee){
-setEmployee(selectedEmployee);
-}
-
-}
-catch(error){
-console.log(error);
-}
-
-};
-
-const handleSubmit=async()=>{
-
-try{
-
-if(employeeId){
-
-await axios.put(
-`https://employee-performance-system-production-2fc6.up.railway.app/api/employees/${employeeId}`,
-employee
-);
-
-alert("Employee Updated");
-
-}
-else{
+const token=localStorage.getItem("token");
 
 await axios.post(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees",
-employee
-);
 
-alert("Employee Added");
+"http://localhost:5000/api/employees",
 
+employee,
+
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
 }
 
-window.location.href="/employees";
+);
+
+alert("Employee Added Successfully");
+
+setEmployee({
+
+name:"",
+email:"",
+performanceScore:"",
+department:"",
+role:""
+
+});
 
 }
 catch(error){
 
 console.log(error);
 
-alert("Operation Failed");
+alert(
+error.response?.data?.message ||
+"Failed To Add Employee"
+);
 
 }
 
@@ -97,65 +62,197 @@ alert("Operation Failed");
 
 return(
 
-<div style={{padding:"30px"}}>
+<div
+style={{
+display:"flex",
+background:"#f3f4f6",
+minHeight:"100vh"
+}}
+>
 
-<h2>
-{employeeId ? "Edit Employee" : "Add Employee"}
-</h2>
+<Sidebar/>
+
+<div
+style={{
+flex:1,
+padding:"40px"
+}}
+>
+
+<div
+style={{
+maxWidth:"700px",
+margin:"auto",
+background:"white",
+padding:"35px",
+borderRadius:"20px",
+boxShadow:"0 4px 15px rgba(0,0,0,0.2)"
+}}
+>
+
+<div
+style={{
+textAlign:"center",
+marginBottom:"30px"
+}}
+>
+
+<div
+style={{
+fontSize:"60px"
+}}
+>
+👨‍💼
+</div>
+
+<h1>Add Employee</h1>
+
+<p style={{color:"gray"}}>
+Create employee profile
+</p>
+
+</div>
+
 
 <input
-name="name"
-placeholder="Name"
+type="text"
+placeholder="Employee Name"
 value={employee.name}
-onChange={handleChange}
+onChange={(e)=>
+setEmployee({
+...employee,
+name:e.target.value
+})
+}
+style={inputStyle}
 />
 
 <br/><br/>
 
+
 <input
-name="email"
-placeholder="Email"
+type="email"
+placeholder="Employee Email"
 value={employee.email}
-onChange={handleChange}
+onChange={(e)=>
+setEmployee({
+...employee,
+email:e.target.value
+})
+}
+style={inputStyle}
 />
 
 <br/><br/>
 
-<input
-name="department"
-placeholder="Department"
-value={employee.department}
-onChange={handleChange}
-/>
-
-<br/><br/>
 
 <input
-name="position"
-placeholder="Position"
-value={employee.position}
-onChange={handleChange}
-/>
-
-<br/><br/>
-
-<input
-name="performanceScore"
+type="number"
 placeholder="Performance Score"
 value={employee.performanceScore}
-onChange={handleChange}
+onChange={(e)=>
+setEmployee({
+...employee,
+performanceScore:e.target.value
+})
+}
+style={inputStyle}
 />
 
 <br/><br/>
 
-<button onClick={handleSubmit}>
-{employeeId ? "Update Employee" : "Add Employee"}
+
+<select
+value={employee.department}
+onChange={(e)=>
+setEmployee({
+...employee,
+department:e.target.value
+})
+}
+style={inputStyle}
+>
+
+<option value="">
+Select Department
+</option>
+
+<option value="HR">
+HR
+</option>
+
+<option value="IT">
+IT
+</option>
+
+<option value="Marketing">
+Marketing
+</option>
+
+<option value="Finance">
+Finance
+</option>
+
+</select>
+
+<br/><br/>
+
+
+<input
+type="text"
+placeholder="Employee Role"
+value={employee.role}
+onChange={(e)=>
+setEmployee({
+...employee,
+role:e.target.value
+})
+}
+style={inputStyle}
+/>
+
+<br/><br/>
+
+
+<button
+onClick={addEmployee}
+style={{
+
+width:"100%",
+padding:"15px",
+border:"none",
+borderRadius:"12px",
+background:"#2563eb",
+color:"white",
+fontWeight:"bold",
+fontSize:"16px",
+cursor:"pointer"
+
+}}
+>
+
+➕ Add Employee
+
 </button>
+
+</div>
+
+</div>
 
 </div>
 
 );
 
 }
+
+const inputStyle={
+
+width:"100%",
+padding:"14px",
+border:"1px solid #d1d5db",
+borderRadius:"12px",
+fontSize:"15px"
+
+};
 
 export default AddEmployee;

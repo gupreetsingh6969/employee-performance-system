@@ -1,76 +1,187 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import Loader from "../components/Loader";
 
-function Dashboard() {
+import{
+BarChart,
+Bar,
+PieChart,
+Pie,
+Cell,
+CartesianGrid,
+XAxis,
+YAxis,
+Tooltip,
+ResponsiveContainer
+}from "recharts";
 
-const [stats, setStats] = useState({
-totalEmployees: 0,
-averageScore: 0,
-highestScore: 0
+function Dashboard(){
+
+const [loading,setLoading]=useState(true);
+
+const [employees,setEmployees]=useState([]);
+const [tasks,setTasks]=useState([]);
+const [feedbackCount,setFeedbackCount]=useState(0);
+
+const [stats,setStats]=useState({
+
+totalEmployees:0,
+averageScore:0,
+highestScore:0,
+totalTasks:0,
+completedTasks:0
+
 });
 
-const [loading, setLoading] = useState(true);
 
-const [error, setError] = useState("");
-
-useEffect(() => {
+useEffect(()=>{
 
 loadDashboard();
 
-}, []);
+},[]);
 
-const loadDashboard = async () => {
 
-try {
 
-setLoading(true);
+const loadDashboard=async()=>{
 
-setError("");
+try{
 
-const response = await axios.get(
-"https://employee-performance-system-production-2fc6.up.railway.app/api/employees"
+const token=
+localStorage.getItem("token");
+
+const headers={
+
+headers:{
+
+Authorization:`Bearer ${token}`
+
+}
+
+};
+
+
+const [
+
+employeeResponse,
+taskResponse,
+feedbackResponse
+
+]=await Promise.all([
+
+axios.get(
+"http://localhost:5000/api/employees",
+headers
+),
+
+axios.get(
+"http://localhost:5000/api/tasks",
+headers
+),
+
+axios.get(
+"http://localhost:5000/api/feedback",
+headers
+)
+
+]);
+
+
+const employeeData=
+employeeResponse.data.data || [];
+
+const taskData=
+taskResponse.data.data ||
+taskResponse.data ||
+[];
+
+const feedbackData=
+feedbackResponse.data.data || [];
+
+
+setEmployees(employeeData);
+
+setTasks(taskData);
+
+setFeedbackCount(
+feedbackData.length
 );
 
-console.log(response.data);
-
-const employees = response.data.data || [];
-
-const totalEmployees = employees.length;
-
-const totalScore = employees.reduce(
-(sum, employee) =>
-sum + Number(employee.performanceScore || 0),
-0
-);
-
-const averageScore =
-employees.length > 0
-? (totalScore / employees.length).toFixed(1)
-: 0;
-
-const highestScore =
-employees.length > 0
-? Math.max(
-...employees.map(
-employee => Number(employee.performanceScore || 0)
-)
-)
-: 0;
 
 setStats({
-totalEmployees,
-averageScore,
-highestScore
+
+totalEmployees:
+employeeData.length,
+
+averageScore:
+
+employeeData.length>0
+
+?
+
+(
+
+employeeData.reduce(
+
+(sum,employee)=>
+
+sum+
+(employee.performanceScore||0),
+
+0
+
+)
+
+/
+
+employeeData.length
+
+).toFixed(1)
+
+:0,
+
+
+highestScore:
+
+employeeData.length>0
+
+?
+
+Math.max(
+
+...employeeData.map(
+
+employee=>
+
+employee.performanceScore||0
+
+)
+
+)
+
+:0,
+
+
+totalTasks:
+taskData.length,
+
+completedTasks:
+
+taskData.filter(
+
+task=>
+
+task.status==="Completed"
+
+).length
+
 });
+
 
 }
 catch(error){
 
 console.log(error);
-
-setError("Failed to load dashboard data");
 
 }
 finally{
@@ -81,102 +192,384 @@ setLoading(false);
 
 };
 
+
+
 if(loading){
 
-return(
-<h2 style={{padding:"30px"}}>
-Loading...
-</h2>
-);
+return <Loader/>;
 
 }
 
-if(error){
 
-return(
-<h2 style={{
-padding:"30px",
-color:"red"
-}}>
-{error}
-</h2>
-);
+
+const employeeGraph=
+
+employees.length>0
+
+?
+
+employees.map(employee=>({
+
+name:employee.name,
+
+score:
+employee.performanceScore || 0
+
+}))
+
+:
+
+[{
+
+name:"No Data",
+
+score:0
+
+}];
+
+
+const completed=
+
+tasks.filter(
+
+task=>
+
+task.status==="Completed"
+
+).length;
+
+
+const pending=
+
+tasks.filter(
+
+task=>
+
+task.status!=="Completed"
+
+).length;
+
+
+const taskGraph=
+
+completed===0 && pending===0
+
+?
+
+[{
+
+name:"No Tasks",
+
+value:1
+
+}]
+
+:
+
+[
+
+{
+
+name:"Completed",
+
+value:completed
+
+},
+
+{
+
+name:"Pending",
+
+value:pending
 
 }
 
+];
+
+
+const colors=[
+
+"#22c55e",
+"#ef4444",
+"#94a3b8"
+
+];
+
+
+
 return(
 
-<div style={{
+<div
+style={{
+
 display:"flex",
-background:"#f3f4f6",
-minHeight:"100vh"
-}}>
+
+background:"#f1f5f9",
+
+minHeight:"100vh",
+
+alignItems:"flex-start"
+
+}}
+>
 
 <Sidebar/>
 
-<div style={{
+
+<div
+style={{
+
 padding:"30px",
-width:"100%"
-}}>
 
-<h1>Employee Performance System</h1>
+width:"100%",
 
-<p>
-Track employee performance, analytics, and AI recommendations
-</p>
+overflowX:"hidden"
 
-<div style={{
-display:"flex",
-gap:"20px",
-flexWrap:"wrap"
-}}>
+}}
+>
 
-<div style={{
+<h1
+style={{
+
+marginBottom:"25px",
+
+fontSize:"30px",
+
+color:"#1e293b"
+
+}}
+>
+
+📊 Employee Performance Dashboard
+
+</h1>
+
+
+
+<div
+style={{
+
+display:"grid",
+
+gridTemplateColumns:
+
+"repeat(auto-fit,minmax(180px,1fr))",
+
+gap:"20px"
+
+}}
+>
+
+{
+
+[
+
+["Employees",stats.totalEmployees],
+
+["Average",stats.averageScore],
+
+["Highest",stats.highestScore],
+
+["Tasks",stats.totalTasks],
+
+["Completed",stats.completedTasks],
+
+["Feedback",feedbackCount]
+
+]
+
+.map((item,index)=>(
+
+<div
+
+key={index}
+
+style={{
+
 background:"white",
+
 padding:"20px",
-borderRadius:"12px"
-}}>
-<h3>Total Employees</h3>
-<h2>{stats.totalEmployees}</h2>
+
+borderRadius:"16px",
+
+boxShadow:
+"0 4px 12px rgba(0,0,0,0.08)"
+
+}}
+
+>
+
+<h3
+style={{
+
+color:"#64748b"
+
+}}
+>
+
+{item[0]}
+
+</h3>
+
+<h1
+style={{
+
+marginTop:"10px",
+
+color:"#2563eb"
+
+}}
+>
+
+{item[1]}
+
+</h1>
+
 </div>
 
-<div style={{
+))
+
+}
+
+</div>
+
+
+<br/>
+
+
+<div
+style={{
+
+display:"grid",
+
+gridTemplateColumns:
+
+"repeat(auto-fit,minmax(450px,1fr))",
+
+gap:"25px"
+
+}}
+>
+
+
+<div
+style={{
+
 background:"white",
+
 padding:"20px",
-borderRadius:"12px"
-}}>
-<h3>Average Score</h3>
-<h2>{stats.averageScore}</h2>
-</div>
 
-<div style={{
-background:"white",
-padding:"20px",
-borderRadius:"12px"
-}}>
-<h3>Highest Score</h3>
-<h2>{stats.highestScore}</h2>
-</div>
+borderRadius:"16px",
 
-</div>
+boxShadow:
+"0 4px 12px rgba(0,0,0,0.08)",
 
-<h2 style={{marginTop:"40px"}}>
-Quick Navigation
+minHeight:"400px"
+
+}}
+>
+
+<h2>
+
+Performance Graph
+
 </h2>
 
-<div style={{
-display:"flex",
-gap:"15px",
-marginTop:"20px"
-}}>
+<ResponsiveContainer
+width="100%"
+height={300}
+>
 
-<Link to="/ai"><button>AI Recommendations</button></Link>
+<BarChart
+data={employeeGraph}
+>
 
-<Link to="/notifications"><button>Notifications</button></Link>
+<CartesianGrid/>
 
-<Link to="/analytics"><button>Analytics</button></Link>
+<XAxis dataKey="name"/>
 
-<Link to="/testing"><button>Testing Metrics</button></Link>
+<YAxis/>
+
+<Tooltip/>
+
+<Bar
+dataKey="score"
+fill="#2563eb"
+/>
+
+</BarChart>
+
+</ResponsiveContainer>
+
+</div>
+
+
+
+<div
+style={{
+
+background:"white",
+
+padding:"20px",
+
+borderRadius:"16px",
+
+boxShadow:
+"0 4px 12px rgba(0,0,0,0.08)",
+
+minHeight:"400px"
+
+}}
+>
+
+<h2>
+
+Task Status
+
+</h2>
+
+
+<ResponsiveContainer
+width="100%"
+height={300}
+>
+
+<PieChart>
+
+<Pie
+data={taskGraph}
+dataKey="value"
+outerRadius={100}
+label
+>
+
+{
+
+taskGraph.map(
+
+(item,index)=>(
+
+<Cell
+key={index}
+fill={colors[index]}
+/>
+
+)
+
+)
+
+}
+
+</Pie>
+
+<Tooltip/>
+
+</PieChart>
+
+</ResponsiveContainer>
+
+</div>
+
 
 </div>
 

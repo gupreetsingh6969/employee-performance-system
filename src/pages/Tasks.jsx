@@ -1,34 +1,46 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
+import axios from "axios";
 
 function Tasks(){
 
-const [taskList,setTaskList]=useState([
+const [taskList,setTaskList]=useState([]);
 
-{
-id:1,
-title:"Performance Evaluation",
-status:"Pending"
-},
+useEffect(()=>{
 
+loadTasks();
+
+},[]);
+
+
+const loadTasks=async()=>{
+
+try{
+
+const token=
+localStorage.getItem("token");
+
+const response=
+await axios.get(
+
+"http://localhost:5000/api/tasks",
 {
-id:2,
-title:"Training Session",
-status:"Completed"
+headers:{
+Authorization:`Bearer ${token}`
+}
 }
 
-]);
+);
 
-const addTask=()=>{
+setTaskList(
+response.data.data
+);
 
-const newTask={
+}
+catch(error){
 
-id:Date.now(),
-title:"New Employee Task",
-status:"Pending"
+console.log(error);
 
-};
-
-setTaskList([...taskList,newTask]);
+}
 
 };
 
@@ -38,22 +50,12 @@ return(
 <div style={{padding:"20px"}}>
 
 <h1>
+
 Task Management
+
 </h1>
 
 <br/>
-
-<button
-onClick={addTask}
-style={{
-padding:"10px",
-cursor:"pointer"
-}}
->
-Add Task
-</button>
-
-<br/><br/>
 
 {
 
@@ -65,13 +67,70 @@ style={{
 border:"1px solid #d1d5db",
 padding:"15px",
 marginBottom:"10px",
-borderRadius:"10px"
+borderRadius:"10px",
+background:"white"
 }}
 >
 
-<h3>{task.title}</h3>
+<h3>
 
-<p>Status: {task.status}</p>
+{task.title}
+
+</h3>
+
+<p>
+
+Status:
+{task.status}
+
+</p>
+
+
+<p>
+
+⭐ Priority:
+{task.priority}
+
+</p>
+
+
+{
+
+task.isOverdue ?
+
+<p style={{color:"red"}}>
+
+🔴 Overdue
+
+</p>
+
+:
+
+task.dueTomorrow ?
+
+<p style={{color:"orange"}}>
+
+🟡 Due Tomorrow
+
+</p>
+
+:
+
+<p style={{color:"green"}}>
+
+🟢 {task.daysRemaining} Days Left
+
+</p>
+
+}
+
+
+<p>
+
+Employee:
+{task.employee?.name}
+
+</p>
 
 </div>
 

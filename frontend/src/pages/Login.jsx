@@ -1,110 +1,426 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Login(){
 
-const [email,setEmail]=useState("");
-const [password,setPassword]=useState("");
+const [loading,setLoading]=useState(false);
 
-const navigate=useNavigate();
+const [showPassword,setShowPassword]=useState(false);
 
-const handleLogin=(e)=>{
+const [formData,setFormData]=useState({
 
-e.preventDefault();
+email:"",
+password:""
 
-if(
+});
 
-email==="Gagan0001@gmail.com"
-&&
-password==="123456"
+const loginUser=async()=>{
 
-){
+try{
+
+setLoading(true);
+
+const response=
+
+await axios.post(
+
+"http://localhost:5000/api/auth/login",
+formData
+
+);
+
+console.log(
+"LOGIN RESPONSE:",
+response.data
+);
+
+
+// Save authentication data
 
 localStorage.setItem(
-"isLoggedIn",
-"true"
+
+"token",
+response.data.token
+
 );
 
-navigate("/dashboard");
+localStorage.setItem(
 
-}
-else{
+"role",
+response.data.user.role
+
+);
+
+localStorage.setItem(
+
+"user",
+
+JSON.stringify(
+response.data.user
+)
+
+);
+
 
 alert(
-"Invalid Email or Password"
+"Login Successful"
 );
+
+window.location="/dashboard";
+
+}
+catch(error){
+
+console.log(
+error.response?.data || error
+);
+
+alert(
+
+error.response?.data?.message ||
+"Login Failed"
+
+);
+
+}
+finally{
+
+setLoading(false);
 
 }
 
 };
 
+
 return(
 
 <div
 style={{
-display:"flex",
-justifyContent:"center",
-alignItems:"center",
+
 height:"100vh",
-background:"#f3f4f6"
+display:"flex",
+background:"#0f172a",
+overflow:"hidden",
+position:"relative"
+
 }}
 >
 
-<form
-onSubmit={handleLogin}
+<div
 style={{
-background:"white",
-padding:"30px",
-borderRadius:"12px",
+
+position:"absolute",
+top:"-100px",
+left:"-100px",
 width:"300px",
-boxShadow:"0 2px 10px rgba(0,0,0,0.1)"
+height:"300px",
+background:"#2563eb",
+borderRadius:"50%",
+opacity:"0.3"
+
+}}
+/>
+
+
+<div
+style={{
+
+position:"absolute",
+bottom:"-100px",
+right:"-100px",
+width:"350px",
+height:"350px",
+background:"#22c55e",
+borderRadius:"50%",
+opacity:"0.2"
+
+}}
+/>
+
+
+<div
+style={{
+
+flex:1,
+padding:"80px",
+color:"white",
+
+display:"flex",
+flexDirection:"column",
+
+justifyContent:"center"
+
 }}
 >
 
-<h1>
-Employee Performance System
+<h1
+style={{
+fontSize:"55px"
+}}
+>
+🚀 Employee Performance System
 </h1>
 
-<input
-type="email"
-placeholder="Enter Email"
-value={email}
-onChange={(e)=>setEmail(e.target.value)}
+<p
 style={{
-width:"100%",
-padding:"12px",
-marginTop:"15px"
-}}
-/>
 
-<input
-type="password"
-placeholder="Enter Password"
-value={password}
-onChange={(e)=>setPassword(e.target.value)}
-style={{
-width:"100%",
-padding:"12px",
-marginTop:"15px"
-}}
-/>
-
-<button
-type="submit"
-style={{
-width:"100%",
-padding:"12px",
+fontSize:"20px",
+lineHeight:"35px",
 marginTop:"20px",
-border:"none",
-borderRadius:"10px",
-cursor:"pointer",
-fontWeight:"bold"
+color:"#cbd5e1"
+
 }}
 >
-Login
+
+Manage employees,
+AI recommendations,
+analytics and task tracking
+from one place.
+
+</p>
+
+</div>
+
+
+
+<div
+style={{
+
+flex:1,
+
+display:"flex",
+
+justifyContent:"center",
+
+alignItems:"center"
+
+}}
+>
+
+<div
+style={{
+
+width:"450px",
+
+padding:"40px",
+
+background:
+"rgba(255,255,255,0.95)",
+
+borderRadius:"30px",
+
+boxShadow:
+"0 15px 50px rgba(0,0,0,0.4)"
+
+}}
+>
+
+<h1
+style={{
+textAlign:"center"
+}}
+>
+
+🔐 Welcome Back
+
+</h1>
+
+<br/>
+
+
+<input
+
+type="email"
+
+placeholder="Email"
+
+value={formData.email}
+
+onChange={(e)=>
+
+setFormData({
+
+...formData,
+email:e.target.value
+
+})
+
+}
+
+style={{
+
+width:"100%",
+padding:"15px",
+
+marginBottom:"15px",
+
+borderRadius:"12px",
+
+border:"1px solid #d1d5db"
+
+}}
+
+/>
+
+
+
+<div
+style={{
+position:"relative"
+}}
+>
+
+<input
+
+type={
+
+showPassword
+?
+"text"
+:
+"password"
+
+}
+
+placeholder="Password"
+
+value={formData.password}
+
+onChange={(e)=>
+
+setFormData({
+
+...formData,
+password:e.target.value
+
+})
+
+}
+
+style={{
+
+width:"100%",
+
+padding:"15px",
+
+borderRadius:"12px",
+
+border:"1px solid #d1d5db"
+
+}}
+
+ />
+
+
+<button
+
+onClick={()=>
+
+setShowPassword(
+!showPassword
+)
+
+}
+
+style={{
+
+position:"absolute",
+
+right:"10px",
+
+top:"12px",
+
+border:"none",
+
+background:"transparent",
+
+cursor:"pointer"
+
+}}
+
+>
+
+{showPassword ? "🙈" : "👁"}
+
 </button>
 
-</form>
+</div>
+
+
+<br/>
+
+
+<button
+
+onClick={loginUser}
+
+disabled={loading}
+
+style={{
+
+width:"100%",
+
+padding:"15px",
+
+background:"#2563eb",
+
+color:"white",
+
+border:"none",
+
+borderRadius:"12px",
+
+fontWeight:"bold",
+
+cursor:"pointer"
+
+}}
+
+>
+
+{
+
+loading
+?
+"Logging..."
+:
+"Login"
+
+}
+
+</button>
+
+
+<p
+style={{
+
+textAlign:"center",
+
+marginTop:"20px"
+
+}}
+>
+
+No account?
+
+<Link
+to="/register"
+
+style={{
+marginLeft:"5px"
+}}
+>
+
+Register
+
+</Link>
+
+</p>
+
+</div>
+
+</div>
 
 </div>
 
@@ -112,4 +428,4 @@ Login
 
 }
 
-export default Login;
+export default Login; 

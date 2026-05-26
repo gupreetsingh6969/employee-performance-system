@@ -1,32 +1,47 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (req, res, next) => {
-  try {
+const verifyToken=(req,res,next)=>{
 
-    const token = req.headers.authorization?.split(" ")[1];
+try{
 
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "No token found"
-      });
-    }
+const token=
+req.headers.authorization?.split(" ")[1];
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+if(!token){
 
-    req.user = decoded;
+return res.status(401).json({
 
-    next();
+success:false,
+message:"No token found"
 
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid token"
-    });
-  }
+});
+
+}
+
+const decoded=
+jwt.verify(
+token,
+process.env.JWT_SECRET
+);
+
+req.user=decoded;
+
+next();
+
+}
+catch(error){
+
+console.log(error);
+
+return res.status(401).json({
+
+success:false,
+message:"Invalid token"
+
+});
+
+}
+
 };
 
 export default verifyToken;

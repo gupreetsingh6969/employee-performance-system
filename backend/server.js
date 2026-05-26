@@ -4,41 +4,54 @@ import cors from "cors";
 
 import connectDatabase from "./config/db.js";
 
-import employeeRoutes from "./routes/employeeRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import performanceRoutes from "./routes/performanceRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-import dashboardRoutes from "./routes/dashboardRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 dotenv.config();
 
-const app = express();
+const app=express();
+
+
+// Middlewares
 
 app.use(cors());
 
 app.use(express.json());
 
 app.use(
+
 express.urlencoded({
+
 extended:true
+
 })
+
 );
 
 
-// Database connection
+// Database Connection
+
 try{
 
 await connectDatabase();
 
 console.log(
-"Database connected successfully"
+"✅ Database Connected Successfully"
 );
 
 }
 catch(error){
 
 console.log(
-"Database Connection Failed"
+"❌ Database Connection Failed"
 );
 
 console.log(error);
@@ -46,28 +59,52 @@ console.log(error);
 }
 
 
-// Home route
+// Health Route
+
 app.get("/",(req,res)=>{
 
 res.status(200).json({
 
 success:true,
-message:"Employee Performance Backend Active"
+
+message:
+"Employee Performance Backend Active"
 
 });
 
 });
 
 
-// Routes
+// API Routes
+
+app.use(
+"/api/auth",
+authRoutes
+);
+
 app.use(
 "/api/employees",
 employeeRoutes
 );
 
 app.use(
-"/api/auth",
-authRoutes
+"/api/tasks",
+taskRoutes
+);
+
+app.use(
+"/api/dashboard",
+dashboardRoutes
+);
+
+app.use(
+"/api/performance",
+performanceRoutes
+);
+
+app.use(
+"/api/analytics",
+analyticsRoutes
 );
 
 app.use(
@@ -81,19 +118,52 @@ notificationRoutes
 );
 
 app.use(
-"/api/dashboard",
-dashboardRoutes
+"/api/feedback",
+feedbackRoutes
+);
+
+app.use(
+"/api/reports",
+reportRoutes
 );
 
 
-// Start server
+// Error Handler
+
+app.use((err,req,res,next)=>{
+
+console.log(
+"Server Error:",
+err
+);
+
+res.status(500).json({
+
+success:false,
+
+message:
+"Internal Server Error"
+
+});
+
+});
+
+
+// Start Server
+
 const PORT=
 process.env.PORT || 5000;
 
-app.listen(PORT,()=>{
+app.listen(
+
+PORT,
+
+()=>{
 
 console.log(
-`Server running on port ${PORT}`
+`🚀 Server Running On Port ${PORT}`
 );
 
-});
+}
+
+);

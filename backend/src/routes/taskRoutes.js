@@ -11,143 +11,208 @@ const prisma = new PrismaClient();
 router.post(
   "/",
   authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+  roleMiddleware("ADMIN","HR","MANAGER"),
+  async (req,res)=>{
+
+    try{
 
       const {
         title,
         description,
         employeeId,
-        deadline
-      } = req.body;
+        deadline,
+        priority
+      }=req.body;
 
-      const task = await prisma.task.create({
-        data: {
+      const task=
+      await prisma.task.create({
+
+        data:{
+
           title,
           description,
-          employeeId: employeeId || null,
-          deadline: deadline ? new Date(deadline) : null,
-          status: "Pending"
+
+          employeeId:
+          Number(employeeId),
+
+          deadline:
+          new Date(deadline),
+
+          priority:
+          priority || "Medium",
+
+          status:"Pending"
+
         }
+
       });
 
       res.status(201).json({
-        message: "Task assigned successfully",
-        task
+
+        success:true,
+        message:"Task assigned successfully",
+        data:task
+
       });
 
-    } catch (error) {
+    }
+
+    catch(error){
 
       console.log(error);
 
       res.status(500).json({
-        error: error.message
+
+        success:false,
+        message:error.message
+
       });
 
     }
+
   }
 );
 
 
 // Get Tasks
+
 router.get(
   "/",
   authMiddleware,
-  async (req, res) => {
-    try {
+  async(req,res)=>{
 
-      const tasks = await prisma.task.findMany({
-        include: {
-          employee: {
-            select: {
-              id: true,
-              name: true,
-              email: true
-            }
-          }
+    try{
+
+      const tasks=
+      await prisma.task.findMany({
+
+        include:{
+
+          employee:true
+
         }
+
       });
 
-      res.json(tasks);
+      res.status(200).json({
 
-    } catch (error) {
+        success:true,
+        data:tasks
+
+      });
+
+    }
+
+    catch(error){
 
       console.log(error);
 
       res.status(500).json({
-        error: error.message
+
+        success:false,
+        message:error.message
+
       });
 
     }
+
   }
 );
 
 
-// Update Task
+// Update task
+
 router.put(
   "/:id",
   authMiddleware,
-  async (req, res) => {
-    try {
+  async(req,res)=>{
 
-      const updatedTask = await prisma.task.update({
-        where: {
-          id: Number(req.params.id)
+    try{
+
+      const updatedTask=
+      await prisma.task.update({
+
+        where:{
+
+          id:Number(req.params.id)
+
         },
-        data: {
-          title: req.body.title,
-          description: req.body.description,
-          status: req.body.status || undefined
+
+        data:{
+
+          status:req.body.status
+
         }
+
       });
 
-      res.json({
-        message: "Task updated successfully",
-        task: updatedTask
+      res.status(200).json({
+
+        success:true,
+        data:updatedTask
+
       });
 
-    } catch (error) {
+    }
+
+    catch(error){
 
       console.log(error);
 
       res.status(500).json({
-        error: error.message
+
+        success:false,
+        message:error.message
+
       });
 
     }
+
   }
 );
 
 
-// Delete Task
+// Delete task
+
 router.delete(
-  "/:id",
-  authMiddleware,
-  roleMiddleware("Admin"),
-  async (req, res) => {
-    try {
+"/:id",
+authMiddleware,
+roleMiddleware("ADMIN","HR"),
+async(req,res)=>{
 
-      await prisma.task.delete({
-        where: {
-          id: Number(req.params.id)
-        }
-      });
+try{
 
-      res.json({
-        message: "Task deleted successfully"
-      });
+await prisma.task.delete({
 
-    } catch (error) {
+where:{
+id:Number(req.params.id)
+}
 
-      console.log(error);
+});
 
-      res.status(500).json({
-        error: error.message
-      });
+res.json({
 
-    }
-  }
+success:true,
+message:"Task deleted"
+
+});
+
+}
+
+catch(error){
+
+console.log(error);
+
+res.status(500).json({
+
+success:false,
+message:error.message
+
+});
+
+}
+
+}
 );
 
 export default router;

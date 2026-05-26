@@ -1,19 +1,13 @@
 import express from "express";
-
-import {
-getNotifications
-}
-from "../controllers/notificationController.js";
-
+import { getReport } from "../controllers/reportController.js";
 import verifyToken from "../middleware/authMiddleware.js";
 
-const router=
-express.Router();
+const router=express.Router();
 
 router.get(
 "/",
 verifyToken,
-getNotifications
+getReport
 );
 
 export default router;

@@ -1,73 +1,336 @@
 import { PrismaClient } from "@prisma/client";
-import { exec } from "child_process";
+import { preprocessEmployeeData } from "../utils/preprocessData.js";
+import { predictPerformance } from "../utils/predictionModel.js";
 
 const prisma = new PrismaClient();
 
-export const getRecommendations = async (req,res) => {
+export const getRecommendations = async(req,res)=>{
 
 try{
 
-const employees =
+const employees=
 await prisma.employee.findMany();
 
-const results=[];
+const processedEmployees=
+preprocessEmployeeData(
+employees
+);
 
-for(const employee of employees){
+const predictedEmployees=
+predictPerformance(
+processedEmployees
+);
+
+
+/* Metrics */
+
+const topPerformers=[];
+const trainingNeeded=[];
+const promotionCandidates=[];
+const riskEmployees=[];
+
+let totalScore=0;
+
+
+/* Employee analysis */
+
+predictedEmployees.forEach(employee=>{
 
 const score=
-employee.performanceScore;
+Number(
+employee.performanceScore ||
+employee.score ||
+0
+);
 
-const tasksCompleted=30;
-const attendance=90;
-const feedbackRating=4;
+totalScore+=score;
 
-const command=
-`python ml/predict.py ${score} ${tasksCompleted} ${attendance} ${feedbackRating}`;
 
-const prediction=
-await new Promise((resolve,reject)=>{
+/* AI prediction category */
 
-exec(
-command,
-(error,stdout)=>{
+if(
+employee.prediction===
+"High Performer"
+){
 
-if(error){
-
-reject(error);
+topPerformers.push(employee);
 
 }
-else{
 
-resolve(
-stdout.trim()
+if(
+employee.prediction===
+"Needs Training"
+){
+
+trainingNeeded.push(employee);
+
+}
+
+
+/* Promotion check */
+
+if(score>=90){
+
+promotionCandidates.push(employee);
+
+}
+
+
+/* Risk check */
+
+if(score<50){
+
+riskEmployees.push(employee);
+
+}
+
+});
+
+
+/* Average score */
+
+const averageScore=
+
+predictedEmployees.length>0
+
+?
+
+(
+
+totalScore/
+
+predictedEmployees.length
+
+).toFixed(1)
+
+:
+
+0;
+
+
+/* Department Insights */
+
+const departmentMap={};
+
+predictedEmployees.forEach(employee=>{
+
+const department=
+employee.department ||
+"Unknown";
+
+const score=
+Number(
+employee.performanceScore ||
+employee.score ||
+0
+);
+
+if(
+!departmentMap[department]
+){
+
+departmentMap[department]={
+
+employees:0,
+totalScore:0
+
+};
+
+}
+
+departmentMap[department]
+.employees++;
+
+departmentMap[department]
+.totalScore+=score;
+
+});
+
+
+const departmentInsights=
+
+Object.keys(
+departmentMap
+).map(key=>({
+
+department:key,
+
+employees:
+departmentMap[key]
+.employees,
+
+averageScore:
+
+(
+
+departmentMap[key]
+.totalScore/
+
+departmentMap[key]
+.employees
+
+).toFixed(1)
+
+}));
+
+
+
+/* AI Actions */
+
+const actions=[];
+
+if(trainingNeeded.length>0){
+
+actions.push(
+"📚 Training sessions recommended for low performers"
 );
 
 }
 
-});
+if(promotionCandidates.length>0){
 
-});
+actions.push(
+"🏆 Promotion review recommended"
+);
 
-results.push({
+}
+
+if(riskEmployees.length>0){
+
+actions.push(
+"⚠️ Performance review meetings required"
+);
+
+}
+
+if(topPerformers.length>0){
+
+actions.push(
+"🎁 Reward and retain top performers"
+);
+
+}
+
+
+
+/* Smart Recommendations */
+
+const smartSuggestions=[];
+
+predictedEmployees.forEach(employee=>{
+
+const score=
+Number(
+employee.performanceScore ||
+employee.score ||
+0
+);
+
+if(score>=90){
+
+smartSuggestions.push({
 
 name:employee.name,
-department:employee.department,
-score,
-recommendation:prediction
+
+message:
+"Leadership opportunity recommended"
 
 });
 
 }
 
+else if(score>=60){
+
+smartSuggestions.push({
+
+name:employee.name,
+
+message:
+"Skill enhancement program suggested"
+
+});
+
+}
+
+else{
+
+smartSuggestions.push({
+
+name:employee.name,
+
+message:
+"Focused mentoring recommended"
+
+});
+
+}
+
+});
+
+
+/* Overall Recommendation */
+
+let recommendation="";
+
+if(averageScore>=80){
+
+recommendation=
+"Overall employee performance is strong";
+
+}
+
+else if(averageScore>=60){
+
+recommendation=
+"Performance is moderate. Improvement plans suggested";
+
+}
+
+else{
+
+recommendation=
+"Organization-wide training initiative recommended";
+
+}
+
+
+
+/* Final Response */
+
 res.status(200).json({
 
 success:true,
-data:results
+
+averageScore,
+
+recommendation,
+
+topPerformers,
+
+trainingNeeded,
+
+promotionCandidates,
+
+riskEmployees,
+
+departmentInsights,
+
+actions,
+
+smartSuggestions,
+
+totalEmployees:
+predictedEmployees.length,
+
+allPredictions:
+predictedEmployees
 
 });
 
 }
 catch(error){
+
+console.log(error);
 
 res.status(500).json({
 
