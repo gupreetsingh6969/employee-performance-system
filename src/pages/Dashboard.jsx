@@ -55,7 +55,7 @@ return;
 const response=
 await axios.get(
 
-`${API_URL}/api/dashboard`,
+`${API_URL}/dashboard`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -334,4 +334,5 @@ borderBottom:"1px solid #ddd"
 }
 
 export default Dashboard;
+
 

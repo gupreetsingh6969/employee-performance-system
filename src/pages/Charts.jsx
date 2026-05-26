@@ -58,7 +58,7 @@ return;
 const response=
 await axios.get(
 
-`${API_URL}/api/employees`,
+`${API_URL}/employees`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -151,4 +151,5 @@ marginTop:"30px"
 }
 
 export default Charts;
+
 

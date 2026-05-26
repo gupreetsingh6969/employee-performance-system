@@ -47,7 +47,7 @@ return;
 const res=
 await axios.get(
 
-`${API_URL}/api/performance`,
+`${API_URL}/performance`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -397,4 +397,5 @@ className="flex justify-between border-b py-3"
 );
 
 }
+
 
