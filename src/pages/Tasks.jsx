@@ -22,7 +22,7 @@ localStorage.getItem("token");
 const response=
 await axios.get(
 
-"http://localhost:5000/api/tasks",
+"import.meta.env.VITE_API_URL/tasks",
 {
 headers:{
 Authorization:`Bearer ${token}`

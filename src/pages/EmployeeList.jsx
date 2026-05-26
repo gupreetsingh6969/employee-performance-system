@@ -23,7 +23,7 @@ try{
 const response=
 await axios.get(
 
-"http://localhost:5000/api/employees",
+"import.meta.env.VITE_API_URL/employees",
 
 {
 headers:{
@@ -81,7 +81,7 @@ try{
 
 await axios.post(
 
-"http://localhost:5000/api/employees",
+"import.meta.env.VITE_API_URL/employees",
 
 {
 name,
@@ -159,7 +159,7 @@ try{
 
 await axios.put(
 
-`http://localhost:5000/api/employees/${employee.id}`,
+`import.meta.env.VITE_API_URL/employees/${employee.id}`,
 
 {
 name,
@@ -201,7 +201,7 @@ try{
 
 await axios.delete(
 
-`http://localhost:5000/api/employees/${id}`,
+`import.meta.env.VITE_API_URL/employees/${id}`,
 
 {
 headers:{

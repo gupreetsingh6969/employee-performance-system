@@ -42,7 +42,7 @@ try{
 const response=
 await axios.get(
 
-"http://localhost:5000/api/employees",
+"import.meta.env.VITE_API_URL/employees",
 
 {
 headers:{
@@ -74,7 +74,7 @@ try{
 const response=
 await axios.get(
 
-"http://localhost:5000/api/tasks",
+"import.meta.env.VITE_API_URL/tasks",
 
 {
 headers:{
@@ -109,7 +109,7 @@ try{
 
 await axios.post(
 
-"http://localhost:5000/api/tasks",
+"import.meta.env.VITE_API_URL/tasks",
 
 taskData,
 
@@ -158,7 +158,7 @@ try{
 
 await axios.put(
 
-`http://localhost:5000/api/tasks/${id}`,
+`import.meta.env.VITE_API_URL/tasks/${id}`,
 
 {
 status:"Completed"
@@ -191,7 +191,7 @@ try{
 
 await axios.delete(
 
-`http://localhost:5000/api/tasks/${id}`,
+`import.meta.env.VITE_API_URL/tasks/${id}`,
 
 {
 headers:{

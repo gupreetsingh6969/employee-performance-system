@@ -40,7 +40,7 @@ localStorage.getItem("token");
 const response=
 await axios.get(
 
-"http://localhost:5000/api/employees",
+"import.meta.env.VITE_API_URL/employees",
 
 {
 headers:{
@@ -86,7 +86,7 @@ localStorage.getItem("token");
 
 await axios.delete(
 
-`http://localhost:5000/api/employees/${id}`,
+`import.meta.env.VITE_API_URL/employees/${id}`,
 
 {
 headers:{
@@ -118,7 +118,7 @@ localStorage.getItem("token");
 
 await axios.put(
 
-`http://localhost:5000/api/employees/${editing}`,
+`import.meta.env.VITE_API_URL/employees/${editing}`,
 
 formData,
 

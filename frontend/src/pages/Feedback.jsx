@@ -52,12 +52,12 @@ feedbackResponse
 ]=await Promise.all([
 
 axios.get(
-"http://localhost:5000/api/employees",
+"import.meta.env.VITE_API_URL/employees",
 getHeaders()
 ),
 
 axios.get(
-"http://localhost:5000/api/feedback",
+"import.meta.env.VITE_API_URL/feedback",
 getHeaders()
 )
 
@@ -109,7 +109,7 @@ try{
 
 await axios.post(
 
-"http://localhost:5000/api/feedback",
+"import.meta.env.VITE_API_URL/feedback",
 
 {
 
