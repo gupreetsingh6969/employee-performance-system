@@ -37,7 +37,7 @@ const loadEmployee=async()=>{
 try{
 
 const response=await axios.get(
-"import.meta.env.VITE_API_URL/employees"
+`${API_URL}/employees"
 );
 
 const employees=response.data;
@@ -85,7 +85,7 @@ performanceScore:Number(employee.performanceScore)
 if(employeeId){
 
 await axios.put(
-`import.meta.env.VITE_API_URL/employees/${employeeId}`,
+`${API_URL}/employees/${employeeId}`,
 payload
 );
 
@@ -95,7 +95,7 @@ alert("Employee Updated");
 else{
 
 await axios.post(
-"import.meta.env.VITE_API_URL/employees",
+`${API_URL}/employees",
 payload
 );
 
@@ -181,5 +181,6 @@ onChange={handleChange}
 }
 
 export default AddEmployee;
+
 
 

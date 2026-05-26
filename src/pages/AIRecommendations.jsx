@@ -22,7 +22,7 @@ const fetchRecommendations=async()=>{
 try{
 
 const response=await axios.get(
-"import.meta.env.VITE_API_URL/ai"
+`${API_URL}/ai"
 );
 
 setData(response.data);
@@ -100,5 +100,6 @@ Need Training: {data.trainingNeeded.length}
 }
 
 export default AIRecommendations;
+
 
 

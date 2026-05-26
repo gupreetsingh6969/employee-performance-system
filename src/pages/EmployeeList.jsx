@@ -23,7 +23,7 @@ try{
 const response=
 await axios.get(
 
-"import.meta.env.VITE_API_URL/employees",
+`${API_URL}/employees",
 
 {
 headers:{
@@ -81,7 +81,7 @@ try{
 
 await axios.post(
 
-"import.meta.env.VITE_API_URL/employees",
+`${API_URL}/employees",
 
 {
 name,
@@ -159,7 +159,7 @@ try{
 
 await axios.put(
 
-`import.meta.env.VITE_API_URL/employees/${employee.id}`,
+`${API_URL}/employees/${employee.id}`,
 
 {
 name,
@@ -201,7 +201,7 @@ try{
 
 await axios.delete(
 
-`import.meta.env.VITE_API_URL/employees/${id}`,
+`${API_URL}/employees/${id}`,
 
 {
 headers:{
@@ -366,5 +366,6 @@ Delete
 }
 
 export default EmployeeList;
+
 
 

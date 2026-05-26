@@ -18,7 +18,7 @@ try{
 
 const response=
 await axios.post(
-"import.meta.env.VITE_API_URL/auth/login",
+`${API_URL}/auth/login",
 {
 email,
 password
@@ -168,5 +168,6 @@ Forgot Password? Contact Admin
 }
 
 export default Login;
+
 
 
