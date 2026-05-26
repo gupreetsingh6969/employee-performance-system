@@ -30,7 +30,7 @@ localStorage.getItem("token");
 
 const response =
 await axios.get(
-`${import.meta.env.VITE_API_URL}/employees`,
+`${API_URL}/employees`,
 
 {
 headers:{
@@ -447,4 +447,6 @@ cursor:"pointer"
 
 
 export default Reports;
+
+
 
